@@ -1,0 +1,100 @@
+<!-- Header -->
+<div class="editor-header center">
+  <span
+    class="title red-on-hover pointer"
+    [class.active]="aboutOpen"
+    (click)="aboutOpen = true"
+    >{{ "TITLE" | translate }}</span
+  >
+
+  <span class="placeholder"></span>
+
+  <app-language-switcher />
+</div>
+
+<!-- Tabs -->
+<mat-tab-group>
+  <mat-tab [label]="'CONTENT' | translate">
+    <app-content-tab />
+  </mat-tab>
+  <!-- WORK IN PROGRESS -->
+  <!-- <mat-tab [label]="'POSITION' | translate">
+    <app-position-tab />
+  </mat-tab> -->
+</mat-tab-group>
+
+<!-- Actions -->
+<div class="actions-row" [ngClass]="{ 'mobile-fixed': isMobile() }">
+  <span class="download-group">
+    <button
+      mat-raised-button
+      color="primary"
+      (click)="download()"
+      class="download-btn red-on-hover"
+    >
+      {{
+        downloadOption === "all"
+          ? ("DOWNLOAD_ALL" | translate)
+          : downloadOption === "img1"
+          ? ("DOWNLOAD_IMAGE_1" | translate)
+          : ("DOWNLOAD_IMAGE_2" | translate)
+      }}
+    </button>
+    <button
+      mat-icon-button
+      [matMenuTriggerFor]="downloadMenu"
+      aria-label="Download-Menü"
+      class="dropdown-btn red-on-hover"
+    >
+      <mat-icon>arrow_drop_down</mat-icon>
+    </button>
+  </span>
+  <button
+    mat-raised-button
+    color="accent"
+    (click)="share()"
+    class="share-btn red-on-hover"
+  >
+    {{ "SHARE" | translate }}
+  </button>
+
+  <mat-menu #downloadMenu="matMenu">
+    <button mat-menu-item (click)="setDownload('all')">
+      {{ "DOWNLOAD_ALL" | translate }}
+    </button>
+    <button mat-menu-item (click)="setDownload('img1')">
+      {{ "DOWNLOAD_IMAGE_1" | translate }}
+    </button>
+    <button mat-menu-item (click)="setDownload('img2')">
+      {{ "DOWNLOAD_IMAGE_2" | translate }}
+    </button>
+  </mat-menu>
+</div>
+
+<!-- About Popup -->
+<div *ngIf="aboutOpen" class="about-popup" (click)="aboutOpen = false">
+  <div class="about-content" (click)="$event.stopPropagation()">
+    <p>{{ "ABOUT" | translate }}</p>
+    <ul>
+      <li>
+        E-Mail:
+        <a href="mailto:dawid.czech1997+neon-black@gmail.com">
+          dawid.czech1997+neon-black&#64;gmail.com
+        </a>
+      </li>
+      <li>
+        GitHub:
+        <a href="https://github.com/Steinente/neon-black" target="_blank">
+          github.com/Steinente/neon-black
+        </a>
+      </li>
+      <li>Discord: steinente</li>
+      <li>
+        Facebook:
+        <a href="https://www.facebook.com/steinente" target="_blank">
+          facebook.com/steinente
+        </a>
+      </li>
+    </ul>
+  </div>
+</div>

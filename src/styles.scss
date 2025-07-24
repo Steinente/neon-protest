@@ -1,1 +1,161 @@
-/* You can add global styles to this file, and also import other style files */
+@font-face {
+  font-family: 'Punk';
+  src: url('assets/fonts/Punk_s_not_dead.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Chainprinter';
+  src: url('assets/fonts/Chainprinter Regular.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+// Pseudo-classes and variables
+:root {
+  --md-sys-color-background: rgb(0, 0, 0);
+  --md-sys-color-background-transparent: rgba(0, 0, 0, 0.7);
+  --md-sys-color-on-background: rgb(255, 255, 255);
+
+  --md-sys-color-primary: rgb(0, 0, 0);
+  --md-sys-color-on-primary: rgb(255, 255, 255);
+
+  --md-sys-color-secondary: rgb(34, 34, 34);
+  --md-sys-color-on-secondary: rgb(255, 255, 255);
+
+  --md-sys-color-tertiary: rgb(227, 0, 11);
+  --md-sys-color-on-tertiary: rgb(255, 255, 255);
+
+  --md-sys-color-error: rgb(227, 0, 11);
+  --md-sys-color-on-error: rgb(255, 255, 255);
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+  background: var(--md-sys-color-primary);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--md-sys-color-tertiary);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-corner {
+  background: var(--md-sys-color-primary);
+}
+
+// Global styles
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  background: var(--md-sys-color-background);
+  color: var(--md-sys-color-on-background);
+  font-family: 'Chainprinter', 'Roboto', Arial, sans-serif;
+  overscroll-behavior: none;
+}
+
+body {
+  min-height: 100vh;
+  min-width: 100vw;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+* {
+  box-sizing: inherit;
+}
+
+.mat-mdc-form-field {
+  width: 100%;
+  color: var(--md-sys-color-on-secondary);
+}
+
+.mat-mdc-select-value,
+.mat-calendar-body-cell {
+  color: var(--md-sys-color-on-secondary);
+}
+
+.mat-calendar-body-cell:hover,
+.mat-calendar-period-button:hover,
+.mat-calendar-next-button:hover,
+.mat-calendar-previous-button:hover,
+.mat-mdc-select-value:hover {
+  color: var(--md-sys-color-tertiary) !important;
+}
+
+.mat-calendar-arrow {
+  fill: var(--md-sys-color-on-primary) !important;
+}
+
+.mat-mdc-button,
+.mat-mdc-raised-button,
+button {
+  border-radius: 8px;
+}
+
+.mat-mdc-raised-button.mat-primary {
+  background: var(--md-sys-color-primary);
+  color: var(--md-sys-color-on-primary);
+}
+
+.mat-mdc-raised-button.mat-accent {
+  background: var(--md-sys-color-secondary);
+  color: var(--md-sys-color-on-secondary);
+}
+
+.mat-mdc-tab-labels {
+  color: var(--md-sys-color-on-secondary);
+  letter-spacing: 0.06em;
+}
+
+.mdc-tab--active,
+.mat-button-toggle-checked {
+  font-weight: bold !important;
+}
+
+.mat-mdc-menu-content {
+  padding: 4px !important;
+}
+
+.mat-mdc-menu-item:hover {
+  background-color: var(--md-sys-color-tertiary) !important;
+}
+
+.cdk-overlay-pane {
+  background: var(--md-sys-color-secondary);
+  border-radius: 8px;
+}
+
+// Utility classes
+.center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.uppercase {
+  text-transform: uppercase;
+}
+
+.red-on-hover:hover {
+  color: var(--md-sys-color-tertiary) !important;
+}
+
+.pointer {
+  cursor: pointer;
+}
+
+// Responsive styles
+@media (max-width: 600px) {
+  html, body {
+    font-size: 15px;
+  }
+
+  .mat-mdc-form-field {
+    font-size: 1em;
+  }
+}

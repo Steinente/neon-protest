@@ -1,0 +1,94 @@
+<form [formGroup]="form">
+  <!-- Format selection -->
+  <mat-button-toggle-group formControlName="format">
+    <mat-button-toggle class="red-on-hover" value="profile">{{
+      "PROFILE" | translate
+    }}</mat-button-toggle>
+    <mat-button-toggle class="red-on-hover" value="story">{{
+      "STORY" | translate
+    }}</mat-button-toggle>
+  </mat-button-toggle-group>
+
+  <!-- Date selection -->
+  <mat-form-field appearance="fill">
+    <mat-label>{{ "DATE" | translate }}</mat-label>
+    <input
+      matInput
+      formControlName="date"
+      [matDatepicker]="picker"
+      class="red-on-hover pointer"
+      (focus)="picker.open()"
+      readonly
+      onmousedown="event.preventDefault()"
+    />
+    <mat-datepicker-toggle
+      matSuffix
+      [for]="picker"
+      class="red-on-hover"
+    ></mat-datepicker-toggle>
+    <mat-datepicker #picker></mat-datepicker>
+  </mat-form-field>
+
+  <!-- Time selection -->
+  <div class="time-selection">
+    <mat-form-field appearance="fill">
+      <mat-label>{{ "TIME_FROM" | translate }}</mat-label>
+      <mat-select class="red-on-hover" formControlName="from">
+        <mat-option
+          class="red-on-hover"
+          *ngFor="let time of times"
+          [value]="time"
+        >
+          {{ formatTime(time) }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+    <mat-form-field appearance="fill">
+      <mat-label>{{ "TIME_TO" | translate }}</mat-label>
+      <mat-select class="red-on-hover" formControlName="to">
+        <mat-option
+          class="red-on-hover"
+          *ngFor="let time of times"
+          [value]="time"
+        >
+          {{ formatTime(time) }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+  </div>
+
+  <!-- Location selection -->
+  <mat-form-field appearance="fill">
+    <mat-label>{{ "PLACE" | translate }}</mat-label>
+    <input class="red-on-hover" matInput formControlName="place" />
+  </mat-form-field>
+
+  <!-- Animal selection -->
+  <mat-form-field appearance="fill">
+    <mat-label>{{ "SELECT_ANIMAL" | translate }}</mat-label>
+    <input
+      matInput
+      readonly
+      (click)="openAnimalDialog()"
+      [value]="animalName ? ('ANIMALS.' + animalName | translate) : ''"
+      class="red-on-hover pointer"
+    />
+    <button
+      mat-icon-button
+      matSuffix
+      (click)="openAnimalDialog()"
+      type="button"
+      class="animal-picker-button red-on-hover pointer"
+    >
+      <mat-icon>pets</mat-icon>
+    </button>
+  </mat-form-field>
+</form>
+
+<!-- Animal selection dialog -->
+<app-animal-dialog
+  *ngIf="animalDialogOpen"
+  [selectedAnimal]="selectedAnimal"
+  (select)="selectAnimal($event)"
+  (close)="animalDialogOpen = false"
+/>

@@ -1,0 +1,33 @@
+<div class="preview-wrapper">
+  <div class="preview-controls">
+    <button
+      (click)="currentIndex = 0"
+      [class.active]="!showAll && current === 0"
+    >
+      {{ "IMAGE_1" | translate }}
+    </button>
+    <button
+      (click)="currentIndex = 1"
+      [class.active]="!showAll && current === 1"
+    >
+      {{ "IMAGE_2" | translate }}
+    </button>
+    <button (click)="openAll()" [class.active]="showAll">
+      {{ "OVERVIEW" | translate }}
+    </button>
+  </div>
+
+  <ng-container *ngIf="!showAll">
+    <ng-container [ngSwitch]="current">
+      <canvas *ngSwitchCase="0" #canvas1 [ngClass]="canvasFormatClass"></canvas>
+      <canvas *ngSwitchCase="1" #canvas2 [ngClass]="canvasFormatClass"></canvas>
+    </ng-container>
+  </ng-container>
+
+  <div class="popup-all" *ngIf="showAll" (click)="closeAll()">
+    <div class="canvas-container" (click)="$event.stopPropagation()">
+      <canvas #canvasAll1 [ngClass]="canvasFormatClass"></canvas>
+      <canvas #canvasAll2 [ngClass]="canvasFormatClass"></canvas>
+    </div>
+  </div>
+</div>

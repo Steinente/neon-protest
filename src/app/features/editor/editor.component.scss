@@ -1,0 +1,129 @@
+.editor-header {
+  display: flex;
+}
+
+.editor-header .placeholder {
+  flex: 1;
+}
+
+.title {
+  font-family: "Punk", sans-serif;
+  font-size: 4em;
+  white-space: nowrap;
+}
+
+.title.active {
+  color: var(--md-sys-color-tertiary);
+}
+
+.actions-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.actions-row.mobile-fixed {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 3000;
+  padding: 12px;
+  background: var(--md-sys-color-secondary);
+  box-shadow: 0 -2px 12px var(--md-sys-color-primary);
+}
+
+.download-group {
+  display: flex;
+  align-items: center;
+  gap: 0;
+
+  .download-btn {
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+    padding-right: 0;
+    z-index: 0;
+  }
+
+  .dropdown-btn {
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+    margin-left: -4px;
+  }
+}
+
+.share-btn {
+  z-index: 0;
+}
+
+// Center alignment for download menu elements
+::ng-deep .mat-mdc-menu-item {
+  text-align: center !important;
+  font-family: inherit;
+}
+
+.about-popup {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: var(--md-sys-color-background-transparent);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+
+.about-content {
+  background: var(--md-sys-color-secondary);
+  color: var(--md-sys-color-on-secondary);
+  padding: 24px;
+  border-radius: 8px;
+  white-space: pre-line;
+}
+
+.about-content ul {
+  list-style: none;
+  padding: 0;
+  margin: 0.5rem 0;
+}
+
+.about-content li {
+  margin: 0.5rem 0;
+}
+
+.about-content li a {
+  margin-left: 0.25rem;
+  color: #007bff;
+  text-decoration: underline;
+}
+
+.about-content li a:hover {
+  color: var(--md-sys-color-tertiary);
+}
+
+@media (max-width: 1350px) {
+  .title {
+    font-size: 3em;
+  }
+}
+
+@media (max-width: 959px) {
+  .title {
+    font-size: 4em;
+  }
+}
+
+@media (max-width: 600px) {
+  ::ng-deep .mat-mdc-menu-content {
+    z-index: 4000 !important;
+    position: relative !important;
+  }
+}
+
+@media (max-width: 510px) {
+  .title {
+    font-size: 3em;
+  }
+}

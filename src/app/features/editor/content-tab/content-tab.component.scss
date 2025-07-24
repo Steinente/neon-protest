@@ -1,0 +1,11 @@
+.time-selection {
+  display: flex;
+  gap: 8px;
+}
+
+.animal-picker-button {
+  background-color: transparent;
+  color: var(--md-sys-color-on-secondary);
+  border: none;
+  padding: 10px;
+}
