@@ -25,6 +25,7 @@
   "ANIMALS": {
     "BUDGIE": "WELLENSITTICH",
     "BUMBLEBEE": "HUMMEL",
+    "CAT": "KATZE",
     "CHIMPANZEE": "SCHIMPANSE",
     "COW_HORNED": "KUH (GEHÖRNT)",
     "COW_POLLED": "KUH (OHNE HÖRNER)",
@@ -40,7 +41,6 @@
     "MOUSE": "MAUS",
     "OCTOPUS": "OKTOPUS",
     "PIGLET": "FERKEL",
-    "PUMA": "PUMA",
     "RABBIT": "KANINCHEN",
     "RAM": "WIDDER",
     "RED_DEER": "ROTWEDELHIRSCH",

@@ -21,7 +21,7 @@ export class AnimalService {
     { name: 'MOUSE', image: 'assets/animals/mouse.jpg' },
     { name: 'OCTOPUS', image: 'assets/animals/octopus.jpg' },
     { name: 'PIGLET', image: 'assets/animals/piglet.jpg' },
-    { name: 'PUMA', image: 'assets/animals/puma.jpg' },
+    { name: 'CAT', image: 'assets/animals/cat.jpg' },
     { name: 'RABBIT', image: 'assets/animals/rabbit.jpg' },
     { name: 'RAM', image: 'assets/animals/ram.jpg' },
     { name: 'RED_DEER', image: 'assets/animals/red_deer.jpg' },
