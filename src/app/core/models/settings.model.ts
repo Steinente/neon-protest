@@ -1,20 +1,28 @@
-export interface AppSettings {
-  format: 'profile' | 'story';
+export type FormatId = 'PROFILE' | 'STORY';
+export type TabId = 'NEON_BLACK' | 'NEON';
+export type ElementType = 'TITLE' | 'SUBTITLE' | 'TEXT' | 'DATE' | 'PLACE' | 'ANIMAL';
+
+export interface AppSettingsPerTab {
+  format: FormatId;
   date: string;
   from: string;
   to: string;
   place: string;
   animal: string;
-  lang: string;
   elements: PositionedElement[];
 }
 
+export interface AppState {
+  activeTabId: TabId;
+  lang: 'de' | 'en' | 'fr';
+  tabs: Record<TabId, AppSettingsPerTab>;
+}
+
 export interface PositionedElement {
-  type: 'title' | 'subtitle' | 'text' | 'date' | 'place' | 'animal';
+  type: ElementType;
   value?: string;
   x: number;
   y: number;
   scale: number;
   fontSize?: number;
-  templateKey?: string;
 }

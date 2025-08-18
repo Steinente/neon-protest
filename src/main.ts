@@ -1,14 +1,14 @@
-import { HttpClient, provideHttpClient } from '@angular/common/http';
-import { importProvidersFrom } from '@angular/core';
+import { HttpClient, provideHttpClient } from '@angular/common/http'
+import { importProvidersFrom } from '@angular/core'
 import {
   MAT_DATE_LOCALE,
   provideNativeDateAdapter,
-} from '@angular/material/core';
-import { bootstrapApplication } from '@angular/platform-browser';
-import { provideAnimations } from '@angular/platform-browser/animations';
-import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
-import { TranslateHttpLoader } from '@ngx-translate/http-loader';
-import { AppComponent } from './app/app.component';
+} from '@angular/material/core'
+import { bootstrapApplication } from '@angular/platform-browser'
+import { provideAnimations } from '@angular/platform-browser/animations'
+import { TranslateLoader, TranslateModule } from '@ngx-translate/core'
+import { TranslateHttpLoader } from '@ngx-translate/http-loader'
+import { AppComponent } from './app/app.component'
 
 export function HttpLoaderFactory(http: HttpClient) {
   return new TranslateHttpLoader(http, 'assets/i18n/', '.json');

@@ -1,3 +1,4 @@
+// language-switcher.component.ts
 import { CommonModule } from '@angular/common'
 import { Component, OnDestroy, OnInit } from '@angular/core'
 import { MatButtonToggleModule } from '@angular/material/button-toggle'
@@ -14,7 +15,7 @@ import { SettingsService } from '../../core/services/settings.service'
   styleUrl: './language-switcher.component.scss',
 })
 export class LanguageSwitcherComponent implements OnInit, OnDestroy {
-  public lang: string = 'de';
+  public lang: 'de' | 'en' | 'fr' = 'de';
   private sub?: Subscription;
 
   constructor(
@@ -24,13 +25,15 @@ export class LanguageSwitcherComponent implements OnInit, OnDestroy {
   ) {}
 
   public ngOnInit(): void {
-    this.lang = this.settings.value.lang;
+    this.lang = this.settings.lang;
     this.translate.use(this.lang);
+    this.dateLocaleService.setLocale(this.lang);
 
     this.sub = this.settings.subscribe((s) => {
       if (s.lang !== this.lang) {
         this.lang = s.lang;
         this.translate.use(s.lang);
+        this.dateLocaleService.setLocale(s.lang);
       }
     });
   }
@@ -39,8 +42,9 @@ export class LanguageSwitcherComponent implements OnInit, OnDestroy {
     this.sub?.unsubscribe();
   }
 
-  public switchLang(lang: string): void {
-    this.settings.update({ lang });
+  public switchLang(lang: 'de' | 'en' | 'fr'): void {
+    this.settings.setLang(lang);
+    this.translate.use(lang);
     this.dateLocaleService.setLocale(lang);
   }
 }

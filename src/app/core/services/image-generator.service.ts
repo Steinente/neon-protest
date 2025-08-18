@@ -1,80 +1,173 @@
-import { Injectable } from '@angular/core'
-import { TranslateService } from '@ngx-translate/core'
-import { firstValueFrom } from 'rxjs'
-import { AppSettings, PositionedElement } from '../models/settings.model'
-import { AnimalService } from './animal.service'
+import { Injectable } from '@angular/core';
+import { TranslateService } from '@ngx-translate/core';
+import { firstValueFrom } from 'rxjs';
+import {
+  AppSettingsPerTab,
+  FormatId,
+  PositionedElement,
+  TabId,
+} from '../models/settings.model';
+import { AnimalService } from './animal.service';
+import { SettingsService } from './settings.service';
+
+type TextStyle = {
+  font: string;
+  color: string;
+  weight?: 'normal' | 'bold';
+};
+
+type Theme = {
+  title: TextStyle;
+  subtitle: TextStyle;
+  text: TextStyle;
+  date: TextStyle;
+  place: TextStyle;
+};
+
+const THEMES: Record<TabId, Theme> = {
+  NEON: {
+    title: { font: 'FeelGood', color: '#e00985', weight: 'normal' },
+    subtitle: { font: 'FeelGood', color: '#131413', weight: 'normal' },
+    text: { font: 'FeelGood', color: '#131413', weight: 'normal' },
+    date: { font: 'FeelGood', color: '#131413', weight: 'normal' },
+    place: { font: 'FeelGood', color: '#131413', weight: 'normal' },
+  },
+  NEON_BLACK: {
+    title: { font: 'Punk', color: '#fff', weight: 'normal' },
+    subtitle: { font: 'Chainprinter', color: '#fff', weight: 'bold' },
+    text: { font: 'Chainprinter', color: '#fff', weight: 'normal' },
+    date: { font: 'Chainprinter', color: '#fff', weight: 'normal' },
+    place: { font: 'Chainprinter', color: '#fff', weight: 'normal' },
+  },
+};
 
 @Injectable({ providedIn: 'root' })
 export class ImageGeneratorService {
   constructor(
     private animals: AnimalService,
-    private translate: TranslateService
+    private translate: TranslateService,
+    private settings: SettingsService
   ) {}
 
   public async generate(
-    settings: AppSettings,
+    tabId: TabId,
+    settingsPerTab: AppSettingsPerTab,
     imageIndex: number
   ): Promise<HTMLCanvasElement> {
-    const bgPath =
-      settings.format === 'profile' ? 'assets/profile.jpg' : 'assets/story.jpg';
+    const bgPath = this.getBackgroundPath(tabId, settingsPerTab.format);
     const bgImage = await this.loadImage(bgPath);
+
     const w = bgImage.width;
     const h = bgImage.height;
     const padding = 0.022 * w;
     const leftX = 0.13 * w + padding;
     const rightX = 0.87 * w;
+
     const canvas = document.createElement('canvas');
     canvas.width = w;
     canvas.height = h;
     const ctx = canvas.getContext('2d')!;
     ctx.drawImage(bgImage, 0, 0);
+    ctx.textAlign = 'center';
 
-    const elements = await this.getTemplateElements(settings, imageIndex);
+    await this.loadFontsFor(tabId);
 
-    await document.fonts.load('24px Punk');
-    await document.fonts.load('24px Chainprinter');
+    let elements = await this.getTemplateElements(
+      tabId,
+      settingsPerTab,
+      imageIndex
+    );
+
+    if (tabId === 'NEON') {
+      elements = elements.map((el) =>
+        el.value
+          ? { ...el, value: el.value.toLocaleLowerCase(this.settings.lang) }
+          : el
+      );
+    }
+    const theme = THEMES[tabId];
 
     for (const el of elements) {
-      if (el.type === 'title' && el.value) {
-        ctx.font = `${el.fontSize! * h}px Punk`;
-        ctx.textAlign = 'center';
-        ctx.fillStyle = '#fff';
-        ctx.fillText(el.value!, el.x * w, el.y * h);
-      }
-      if (el.type === 'subtitle' && el.value && el.fontSize) {
-        ctx.font = `bold ${el.fontSize! * h}px Chainprinter`;
-        ctx.textAlign = 'center';
-        ctx.fillStyle = '#fff';
-        this.drawJustifiedUnderlinedTextBetween(
-          ctx,
-          el.value!,
-          leftX,
-          rightX,
-          el.y * h,
-          el.fontSize! * h
-        );
-      }
-      if (el.type === 'text' && el.value) {
-        ctx.font = `${el.fontSize! * h}px Chainprinter`;
-        ctx.textAlign = 'center';
-        ctx.fillStyle = '#fff';
-        this.drawMultilineText(ctx, el.value, el.x * w, el.y * h);
-      }
-      if (el.type === 'date') {
-        ctx.font = `${el.fontSize! * h}px Chainprinter`;
-        ctx.textAlign = 'center';
-        ctx.fillStyle = '#fff';
-        this.drawJustifiedTextBetween(ctx, el.value!, leftX, rightX, el.y * h);
-      }
-      if (el.type === 'place') {
-        ctx.font = `${el.fontSize! * h}px Chainprinter`;
-        ctx.textAlign = 'center';
-        ctx.fillStyle = '#fff';
-        this.drawJustifiedTextBetween(ctx, el.value!, leftX, rightX, el.y * h);
-      }
-      if (el.type === 'animal') {
-        const animal = this.animals.getByName(settings.animal);
-        if (animal) {
+      switch (el.type) {
+        case 'TITLE':
+          if (!el.value) break;
+          this.applyTextStyle(ctx, theme.title, el.fontSize!, h);
+          ctx.fillText(el.value, el.x * w, el.y * h);
+          break;
+
+        case 'SUBTITLE':
+          if (!el.value || !el.fontSize) break;
+          this.applyTextStyle(ctx, theme.subtitle, el.fontSize, h);
+          if (tabId === 'NEON') {
+            this.drawJustifiedUnderlinedTextBetween(
+              ctx,
+              el.value,
+              leftX,
+              rightX,
+              el.y * h,
+              el.fontSize * h,
+              0.7,
+              0.7
+            );
+          } else {
+            this.drawJustifiedUnderlinedTextBetween(
+              ctx,
+              el.value,
+              leftX,
+              rightX,
+              el.y * h,
+              el.fontSize * h
+            );
+          }
+          break;
+
+        case 'TEXT':
+          if (!el.value || !el.fontSize) break;
+          this.applyTextStyle(ctx, theme.text, el.fontSize, h);
+          if (tabId === 'NEON') {
+            this.drawJustifiedMultilineTextBetween(
+              ctx,
+              el.value,
+              leftX,
+              rightX,
+              el.y * h,
+              el.fontSize * h,
+              1
+            );
+          } else {
+            this.drawMultilineText(ctx, el.value, el.x * w, el.y * h);
+          }
+          break;
+
+        case 'DATE':
+          if (!el.value || !el.fontSize) break;
+          this.applyTextStyle(ctx, theme.date, el.fontSize, h);
+          this.drawJustifiedTextBetween(
+            ctx,
+            el.value,
+            leftX,
+            rightX,
+            el.y * h,
+            false
+          );
+          break;
+
+        case 'PLACE':
+          if (!el.value || !el.fontSize) break;
+          this.applyTextStyle(ctx, theme.place, el.fontSize, h);
+          this.drawJustifiedTextBetween(
+            ctx,
+            el.value,
+            leftX,
+            rightX,
+            el.y * h,
+            false
+          );
+          break;
+
+        case 'ANIMAL': {
+          const animal = this.animals.getByName(tabId, settingsPerTab.animal);
+          if (!animal) break;
           const img = await this.loadImage(animal.image);
           const aspectRatio = img.width / img.height;
           const scaledHeight = el.scale * h;
@@ -86,10 +179,49 @@ export class ImageGeneratorService {
             scaledWidth,
             scaledHeight
           );
+          break;
         }
       }
     }
+
     return canvas;
+  }
+
+  private getBackgroundPath(tabId: TabId, format: FormatId): string {
+    const isProfile = format === 'PROFILE';
+    if (tabId === 'NEON') {
+      return isProfile ? 'assets/profile_neon.jpg' : 'assets/story_neon.jpg';
+    }
+    return isProfile
+      ? 'assets/profile_neon_black.jpg'
+      : 'assets/story_neon_black.jpg';
+  }
+
+  private applyTextStyle(
+    ctx: CanvasRenderingContext2D,
+    style: TextStyle,
+    fontSizeRel: number,
+    h: number
+  ): void {
+    const px = fontSizeRel * h;
+    const weight =
+      style.weight && style.weight !== 'normal' ? `${style.weight} ` : '';
+    ctx.font = `${weight}${px}px ${style.font}`;
+    ctx.fillStyle = style.color;
+  }
+
+  private async loadFontsFor(tabId: TabId): Promise<void> {
+    const t = THEMES[tabId];
+    const families = new Set([
+      t.title.font,
+      t.subtitle.font,
+      t.text.font,
+      t.date.font,
+      t.place.font,
+    ]);
+    for (const f of families) {
+      await document.fonts.load(`24px ${f}`);
+    }
   }
 
   private drawJustifiedTextBetween(
@@ -97,24 +229,22 @@ export class ImageGeneratorService {
     text: string,
     leftX: number,
     rightX: number,
-    y: number
+    y: number,
+    isTitle: boolean
   ): void {
     if (!text || text.length < 2) {
       ctx.textAlign = 'left';
       ctx.fillText(text, leftX, y);
       return;
     }
-
     const letters = text.split('');
     const totalTextWidth = ctx.measureText(text).width;
     const gaps = letters.length - 1;
     const totalAvailable = rightX - leftX;
     const spacing = (totalAvailable - totalTextWidth) / gaps;
 
-    let x = leftX;
-
-    for (let i = 0; i < letters.length; i++) {
-      const letter = letters[i];
+    let x = leftX + (isTitle ? 85 : 0);
+    for (const letter of letters) {
       ctx.fillText(letter, x, y);
       x += ctx.measureText(letter).width + spacing;
     }
@@ -126,7 +256,9 @@ export class ImageGeneratorService {
     leftX: number,
     rightX: number,
     y: number,
-    fontSize: number
+    fontSize: number,
+    iBiasRatio: number = 0,
+    iFirstRightExtraRatio: number = 0
   ): void {
     if (!text || text.length < 2) {
       ctx.textAlign = 'left';
@@ -139,15 +271,42 @@ export class ImageGeneratorService {
     const totalTextWidth = ctx.measureText(text).width;
     const gaps = letters.length - 1;
     const totalAvailable = rightX - leftX;
-    const spacing = (totalAvailable - totalTextWidth) / gaps;
+    const totalSpacing = totalAvailable - totalTextWidth;
+
+    const weights = new Array(gaps).fill(1);
+    const r = Math.max(-0.9, Math.min(0.9, iBiasRatio));
+    const isI = (ch: string) => ch.toLowerCase() === 'i';
+
+    if (r !== 0) {
+      for (let j = 0; j < gaps; j++) {
+        const leftChar = letters[j];
+        const rightChar = letters[j + 1];
+        if (isI(rightChar)) weights[j] *= 1 - r;
+        else if (isI(leftChar)) weights[j] *= 1 + r;
+      }
+    }
+
+    if (
+      letters[0] &&
+      isI(letters[0]) &&
+      iFirstRightExtraRatio !== 0 &&
+      gaps > 0
+    ) {
+      weights[0] *= 1 + iFirstRightExtraRatio;
+    }
+
+    const sumW = weights.reduce((a, b) => a + b, 0);
+    const unit = sumW > 0 ? totalSpacing / sumW : 0;
+    const gapWidths = weights.map((w) => w * unit);
 
     let x = leftX;
     const positions: number[] = [];
-
-    for (const letter of letters) {
+    for (let k = 0; k < letters.length; k++) {
+      const ch = letters[k];
       positions.push(x);
-      ctx.fillText(letter, x, y);
-      x += ctx.measureText(letter).width + spacing;
+      ctx.fillText(ch, x, y);
+      x += ctx.measureText(ch).width;
+      if (k < gaps) x += gapWidths[k];
     }
 
     const underlineStart = positions[0];
@@ -156,8 +315,69 @@ export class ImageGeneratorService {
     const underlineWidth =
       (positions.at(-1) ?? leftX) + lastLetterWidth - underlineStart;
 
-    // -18 correction
     this.drawUnderline(ctx, underlineStart - 18, underlineWidth, y, fontSize);
+  }
+
+  private drawJustifiedMultilineTextBetween(
+    ctx: CanvasRenderingContext2D,
+    text: string,
+    leftX: number,
+    rightX: number,
+    startY: number,
+    fontPx: number,
+    lineHeightFactor: number = 1.3,
+    shortLetterSpacingRatio: number = 0.08
+  ): void {
+    const prevAlign: CanvasTextAlign = ctx.textAlign as CanvasTextAlign;
+    ctx.textAlign = 'left';
+
+    const centerX = (leftX + rightX) / 2;
+    const shortThreshold = 19;
+
+    const lines = text.split('\n');
+    let y = startY;
+
+    for (const line of lines) {
+      const len = line.length;
+
+      if (len === 0) {
+        y += fontPx * lineHeightFactor;
+        continue;
+      }
+
+      if (len < shortThreshold) {
+        const letters = Array.from(line);
+        const tracking = Math.max(1, fontPx * shortLetterSpacingRatio);
+        const charsWidth = letters.reduce(
+          (sum, ch) => sum + ctx.measureText(ch).width,
+          0
+        );
+        const totalWidth = charsWidth + tracking * (letters.length - 1);
+        let x = centerX - totalWidth / 2;
+        for (const ch of letters) {
+          ctx.fillText(ch, x, y);
+          x += ctx.measureText(ch).width + tracking;
+        }
+      } else {
+        const gaps = len - 1;
+        if (gaps <= 0) {
+          ctx.fillText(line, leftX, y);
+        } else {
+          const totalTextWidth = ctx.measureText(line).width;
+          const totalAvailable = rightX - leftX;
+          const spacing = (totalAvailable - totalTextWidth) / gaps;
+          let x = leftX - 15;
+          for (const ch of line) {
+            ctx.fillText(ch, x, y);
+            x += ctx.measureText(ch).width + spacing;
+          }
+        }
+      }
+
+      y += fontPx * lineHeightFactor;
+    }
+
+    ctx.textAlign = prevAlign;
   }
 
   private drawUnderline(
@@ -168,7 +388,6 @@ export class ImageGeneratorService {
     fontSize: number
   ): void {
     const underlineY = y + fontSize * 0.2;
-
     ctx.beginPath();
     ctx.moveTo(startX, underlineY);
     ctx.lineTo(startX + width, underlineY);
@@ -192,7 +411,7 @@ export class ImageGeneratorService {
     text: string,
     x: number,
     y: number
-  ) {
+  ): void {
     const lines = text.split('\n');
     const lineHeight = 1.3 * parseInt(ctx.font);
     lines.forEach((line, i) => {
@@ -201,132 +420,103 @@ export class ImageGeneratorService {
   }
 
   private async getTemplateElements(
-    settings: AppSettings,
+    tabId: TabId,
+    settingsPerTab: AppSettingsPerTab,
     imageIndex: number
   ): Promise<PositionedElement[]> {
-    const f = settings.format === 'profile' ? 'P' : 'S';
-    const suffix = `${f}${imageIndex + 1}`;
     const elements: PositionedElement[] = [];
 
-    const title = await firstValueFrom(this.translate.get('TITLE'));
+    const title = await firstValueFrom(this.translate.get(`TITLE.${tabId}`));
     const subtitle = await firstValueFrom(this.translate.get('SUBTITLE'));
-    const soonCity = await firstValueFrom(this.translate.get('SOON_CITY'));
+    const soonCity = await firstValueFrom(
+      this.translate.get(`SOON_CITY.${tabId}`)
+    );
     const soonProtest = await firstValueFrom(
-      this.translate.get('SOON_PROTEST')
+      this.translate.get(`SOON_PROTEST.${tabId}`)
     );
 
-    if (settings.format === 'profile') {
-      if (imageIndex === 0) {
-        elements.push(
-          this.createTitleElement(title, 0.5, 0.24, 1, 0.18, `title${suffix}`),
-          this.createSubtitleElement(
-            subtitle,
-            0.5,
-            0.33,
-            1,
-            0.035,
-            `subtitle${suffix}`
-          ),
-          this.createAnimalElement(0.5, 0.7, 0.48, `animal${suffix}`),
-          this.createDateElement(0.5, 0.4, 1, 0.03, `date${suffix}`, settings),
-          this.createPlaceElement(
-            0.5,
-            0.43,
-            1,
-            0.028,
-            `place${suffix}`,
-            settings
-          )
-        );
+    if (tabId === 'NEON') {
+      if (settingsPerTab.format === 'PROFILE') {
+        if (imageIndex === 0) {
+          elements.push(
+            this.createTitleElement(title, 0.5, 0.29, 1, 0.29),
+            this.createSubtitleElement(subtitle, 0.5, 0.35, 1, 0.044),
+            this.createAnimalElement(0.5, 0.7, 0.4),
+            this.createDateElement(0.5, 0.42, 1, 0.033, settingsPerTab),
+            this.createPlaceElement(0.5, 0.455, 1, 0.033, settingsPerTab)
+          );
+        } else {
+          elements.push(
+            this.createTitleElement(title, 0.5, 0.29, 1, 0.29),
+            this.createSubtitleElement(subtitle, 0.5, 0.35, 1, 0.044),
+            this.createAnimalElement(0.5, 0.81, 0.3),
+            this.createTextElement(soonCity, 0.5, 0.41, 1, 0.033)
+          );
+        }
       } else {
-        elements.push(
-          this.createTitleElement(title, 0.5, 0.24, 1, 0.18, `title${suffix}`),
-          this.createSubtitleElement(
-            subtitle,
-            0.5,
-            0.31,
-            1,
-            0.03,
-            `subtitle${suffix}`
-          ),
-          this.createAnimalElement(0.5, 0.81, 0.3, `animal${suffix}`),
-          this.createTextElement(
-            soonCity,
-            0.5,
-            0.365,
-            1,
-            0.028,
-            `textblock${suffix}`
-          )
-        );
+        if (imageIndex === 0) {
+          elements.push(
+            this.createTitleElement(title, 0.5, 0.23, 1, 0.2),
+            this.createSubtitleElement(subtitle, 0.5, 0.28, 1, 0.03),
+            this.createAnimalElement(0.5, 0.72, 0.44),
+            this.createTextElement(soonProtest, 0.5, 0.34, 1, 0.025),
+            this.createDateElement(0.5, 0.42, 1, 0.025, settingsPerTab),
+            this.createPlaceElement(0.5, 0.45, 1, 0.025, settingsPerTab)
+          );
+        } else {
+          elements.push(
+            this.createTitleElement(title, 0.5, 0.23, 1, 0.2),
+            this.createSubtitleElement(subtitle, 0.5, 0.28, 1, 0.03),
+            this.createAnimalElement(0.5, 0.75, 0.38),
+            this.createTextElement(soonCity, 0.5, 0.34, 1, 0.025)
+          );
+        }
       }
     } else {
-      if (imageIndex === 0) {
-        elements.push(
-          this.createTitleElement(title, 0.5, 0.21, 1, 0.13, `title${suffix}`),
-          this.createSubtitleElement(
-            subtitle,
-            0.5,
-            0.28,
-            1,
-            0.025,
-            `subtitle${suffix}`
-          ),
-          this.createAnimalElement(0.5, 0.73, 0.4, `animal${suffix}`),
-          this.createTextElement(
-            soonProtest,
-            0.5,
-            0.34,
-            1,
-            0.023,
-            `textblock${suffix}`
-          ),
-          this.createDateElement(
-            0.5,
-            0.47,
-            1,
-            0.021,
-            `date${suffix}`,
-            settings
-          ),
-          this.createPlaceElement(
-            0.5,
-            0.5,
-            1,
-            0.021,
-            `place${suffix}`,
-            settings
-          )
-        );
+      if (settingsPerTab.format === 'PROFILE') {
+        if (imageIndex === 0) {
+          elements.push(
+            this.createTitleElement(title, 0.5, 0.24, 1, 0.18),
+            this.createSubtitleElement(subtitle, 0.5, 0.33, 1, 0.035),
+            this.createAnimalElement(0.5, 0.7, 0.48),
+            this.createDateElement(0.5, 0.4, 1, 0.03, settingsPerTab),
+            this.createPlaceElement(0.5, 0.43, 1, 0.028, settingsPerTab)
+          );
+        } else {
+          elements.push(
+            this.createTitleElement(title, 0.5, 0.24, 1, 0.18),
+            this.createSubtitleElement(subtitle, 0.5, 0.31, 1, 0.03),
+            this.createAnimalElement(0.5, 0.81, 0.3),
+            this.createTextElement(soonCity, 0.5, 0.365, 1, 0.028)
+          );
+        }
       } else {
-        elements.push(
-          this.createTitleElement(title, 0.5, 0.21, 1, 0.13, `title${suffix}`),
-          this.createSubtitleElement(
-            subtitle,
-            0.5,
-            0.28,
-            1,
-            0.025,
-            `subtitle${suffix}`
-          ),
-          this.createAnimalElement(0.5, 0.78, 0.35, `animal${suffix}`),
-          this.createTextElement(
-            soonCity,
-            0.5,
-            0.34,
-            1,
-            0.021,
-            `textblock${suffix}`
-          )
-        );
+        if (imageIndex === 0) {
+          elements.push(
+            this.createTitleElement(title, 0.5, 0.21, 1, 0.13),
+            this.createSubtitleElement(subtitle, 0.5, 0.28, 1, 0.025),
+            this.createAnimalElement(0.5, 0.73, 0.4),
+            this.createTextElement(soonProtest, 0.5, 0.34, 1, 0.023),
+            this.createDateElement(0.5, 0.47, 1, 0.021, settingsPerTab),
+            this.createPlaceElement(0.5, 0.5, 1, 0.021, settingsPerTab)
+          );
+        } else {
+          elements.push(
+            this.createTitleElement(title, 0.5, 0.21, 1, 0.13),
+            this.createSubtitleElement(subtitle, 0.5, 0.28, 1, 0.025),
+            this.createAnimalElement(0.5, 0.78, 0.35),
+            this.createTextElement(soonCity, 0.5, 0.34, 1, 0.021)
+          );
+        }
       }
     }
 
     return elements;
   }
 
-  private getDateTimeString(settings: AppSettings): string {
-    const date = new Date(settings.date);
+  private getDateTimeString(settingsPerTab: AppSettingsPerTab): string {
+    const lang = this.settings.lang || 'de';
+    const date = new Date(settingsPerTab.date);
 
     const parseTime = (timeStr: string) => {
       const [hours, minutes] = timeStr.split(':').map(Number);
@@ -335,22 +525,26 @@ export class ImageGeneratorService {
       return result;
     };
 
-    const fromTime = parseTime(settings.from);
-    const toTime = parseTime(settings.to);
+    const fromTime = parseTime(settingsPerTab.from);
+    const toTime = parseTime(settingsPerTab.to);
 
     const pad = (n: number) => n.toString().padStart(2, '0');
 
-    const formatDate = (date: Date) => {
-      switch (settings.lang) {
+    const formatDate = (d: Date) => {
+      switch (lang) {
         case 'de':
-          return `${pad(date.getDate())}.${pad(date.getMonth() + 1)}.${date
+          return `${pad(d.getDate())}.${pad(d.getMonth() + 1)}.${d
+            .getFullYear()
+            .toString()
+            .slice(-2)}`;
+        case 'fr':
+          return `${pad(d.getDate())}/${pad(d.getMonth() + 1)}/${d
             .getFullYear()
             .toString()
             .slice(-2)}`;
         case 'en':
-        case 'fr':
         default:
-          return `${pad(date.getDate())}/${pad(date.getMonth() + 1)}/${date
+          return `${pad(d.getDate())}/${pad(d.getMonth() + 1)}/${d
             .getFullYear()
             .toString()
             .slice(-2)}`;
@@ -358,7 +552,7 @@ export class ImageGeneratorService {
     };
 
     const formatTime = (d: Date) => {
-      if (settings.lang === 'en') {
+      if (lang === 'en') {
         let hours = d.getHours();
         const minutes = pad(d.getMinutes());
         const ampm = hours >= 12 ? 'PM' : 'AM';
@@ -379,10 +573,9 @@ export class ImageGeneratorService {
   private createAnimalElement(
     x: number,
     y: number,
-    scale: number,
-    templateKey: string
+    scale: number
   ): PositionedElement {
-    return { type: 'animal', x, y, scale, templateKey };
+    return { type: 'ANIMAL', x, y, scale };
   }
 
   private createTextElement(
@@ -390,10 +583,9 @@ export class ImageGeneratorService {
     x: number,
     y: number,
     scale: number,
-    fontSize: number,
-    templateKey: string
+    fontSize: number
   ): PositionedElement {
-    return { type: 'text', value, x, y, scale, fontSize, templateKey };
+    return { type: 'TEXT', value, x, y, scale, fontSize };
   }
 
   private createTitleElement(
@@ -401,10 +593,9 @@ export class ImageGeneratorService {
     x: number,
     y: number,
     scale: number,
-    fontSize: number,
-    templateKey: string
+    fontSize: number
   ): PositionedElement {
-    return { type: 'title', value, x, y, scale, fontSize, templateKey };
+    return { type: 'TITLE', value, x, y, scale, fontSize };
   }
 
   private createSubtitleElement(
@@ -412,10 +603,9 @@ export class ImageGeneratorService {
     x: number,
     y: number,
     scale: number,
-    fontSize: number,
-    templateKey: string
+    fontSize: number
   ): PositionedElement {
-    return { type: 'subtitle', value, x, y, scale, fontSize, templateKey };
+    return { type: 'SUBTITLE', value, x, y, scale, fontSize };
   }
 
   private createDateElement(
@@ -423,17 +613,15 @@ export class ImageGeneratorService {
     y: number,
     scale: number,
     fontSize: number,
-    templateKey: string,
-    settings: AppSettings
+    settingsPerTab: AppSettingsPerTab
   ): PositionedElement {
     return {
-      type: 'date',
-      value: this.getDateTimeString(settings),
+      type: 'DATE',
+      value: this.getDateTimeString(settingsPerTab),
       x,
       y,
       scale,
       fontSize,
-      templateKey,
     };
   }
 
@@ -442,17 +630,15 @@ export class ImageGeneratorService {
     y: number,
     scale: number,
     fontSize: number,
-    templateKey: string,
-    settings: AppSettings
+    settingsPerTab: AppSettingsPerTab
   ): PositionedElement {
     return {
-      type: 'place',
-      value: settings.place.replace(/ß/g, 'ẞ').toUpperCase(),
+      type: 'PLACE',
+      value: settingsPerTab.place,
       x,
       y,
       scale,
       fontSize,
-      templateKey,
     };
   }
 }

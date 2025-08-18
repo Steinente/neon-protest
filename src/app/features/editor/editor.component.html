@@ -4,23 +4,23 @@
     class="title red-on-hover pointer"
     [class.active]="aboutOpen"
     (click)="aboutOpen = true"
-    >{{ "TITLE" | translate }}</span
+    >{{ "TITLE." + settings.activeTabId | translate }}</span
   >
-
   <span class="placeholder"></span>
-
   <app-language-switcher />
 </div>
 
 <!-- Tabs -->
-<mat-tab-group>
-  <mat-tab [label]="'CONTENT' | translate">
-    <app-content-tab />
+<mat-tab-group
+  [selectedIndex]="selectedTabIndex"
+  (selectedIndexChange)="onTabChange($event)"
+>
+  <mat-tab [label]="'TITLE.NEON_BLACK' | translate">
+    <app-content-tab [tabId]="'NEON_BLACK'" />
   </mat-tab>
-  <!-- WORK IN PROGRESS -->
-  <!-- <mat-tab [label]="'POSITION' | translate">
-    <app-position-tab />
-  </mat-tab> -->
+  <mat-tab [label]="'TITLE.NEON' | translate">
+    <app-content-tab [tabId]="'NEON'" />
+  </mat-tab>
 </mat-tab-group>
 
 <!-- Actions -->
@@ -32,9 +32,9 @@
       class="download-btn red-on-hover"
     >
       {{
-        downloadOption === "all"
+        downloadOption === "ALL"
           ? ("DOWNLOAD_ALL" | translate)
-          : downloadOption === "img1"
+          : downloadOption === "IMG1"
           ? ("DOWNLOAD_IMAGE_1" | translate)
           : ("DOWNLOAD_IMAGE_2" | translate)
       }}
@@ -47,29 +47,26 @@
       <mat-icon>arrow_drop_down</mat-icon>
     </button>
   </span>
-  <button
-    mat-raised-button
-    (click)="share()"
-    class="share-btn red-on-hover"
-  >
+  <button mat-raised-button (click)="share()" class="share-btn red-on-hover">
     {{ "SHARE" | translate }}
   </button>
 
   <mat-menu #downloadMenu="matMenu">
-    <button mat-menu-item (click)="setDownload('all')">
+    <button mat-menu-item (click)="setDownload('ALL')">
       {{ "DOWNLOAD_ALL" | translate }}
     </button>
-    <button mat-menu-item (click)="setDownload('img1')">
+    <button mat-menu-item (click)="setDownload('IMG1')">
       {{ "DOWNLOAD_IMAGE_1" | translate }}
     </button>
-    <button mat-menu-item (click)="setDownload('img2')">
+    <button mat-menu-item (click)="setDownload('IMG2')">
       {{ "DOWNLOAD_IMAGE_2" | translate }}
     </button>
   </mat-menu>
 </div>
 
 <!-- About Popup -->
-<div *ngIf="aboutOpen" class="about-popup" (click)="aboutOpen = false">
+@if (aboutOpen) {
+<div class="about-popup" (click)="aboutOpen = false">
   <div class="about-content" (click)="$event.stopPropagation()">
     <p>{{ "ABOUT" | translate }}</p>
     <ul>
@@ -95,3 +92,4 @@
     </ul>
   </div>
 </div>
+}

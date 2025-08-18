@@ -6,12 +6,13 @@ import { MatMenuModule } from '@angular/material/menu'
 import { MatTabsModule } from '@angular/material/tabs'
 import { TranslateModule, TranslateService } from '@ngx-translate/core'
 import { firstValueFrom } from 'rxjs'
+import { TabId } from '../../core/models/settings.model'
 import { ImageGeneratorService } from '../../core/services/image-generator.service'
 import { SettingsService } from '../../core/services/settings.service'
 import { LanguageSwitcherComponent } from '../../shared/language-switcher/language-switcher.component'
 import { ContentTabComponent } from './content-tab/content-tab.component'
 
-type DownloadOption = 'all' | 'img1' | 'img2';
+type DownloadOption = 'ALL' | 'IMG1' | 'IMG2';
 
 @Component({
   selector: 'app-editor',
@@ -30,8 +31,11 @@ type DownloadOption = 'all' | 'img1' | 'img2';
   styleUrl: './editor.component.scss',
 })
 export class EditorComponent {
-  aboutOpen: boolean = false;
-  downloadOption: DownloadOption = 'all';
+  public aboutOpen: boolean = false;
+  public downloadOption: DownloadOption = 'ALL';
+  public selectedTabIndex: number = 0;
+
+  private readonly tabs: Array<TabId> = ['NEON_BLACK', 'NEON'];
 
   constructor(
     public settings: SettingsService,
@@ -39,17 +43,29 @@ export class EditorComponent {
     private translate: TranslateService
   ) {}
 
+  public ngOnInit(): void {
+    const id: TabId = this.settings.activeTabId || this.tabs[0];
+    this.selectedTabIndex = this.getIndexById(id);
+    this.settings.setActiveTab(id);
+  }
+
+  public onTabChange(index: number): void {
+    this.selectedTabIndex = index;
+    this.settings.setActiveTab(this.getIdByIndex(index));
+  }
+
   public setDownload(type: DownloadOption): void {
     this.downloadOption = type;
   }
 
   public async download(): Promise<void> {
-    const s = this.settings.value;
+    const tabId = this.settings.activeTabId;
+    const s = this.settings.getFor(tabId);
     const indices = this.getSelectedIndices();
 
     for (const i of indices) {
-      const canvas = await this.imageGen.generate(s, i);
-      await this.triggerDownload(canvas, this.getFilename(i));
+      const canvas = await this.imageGen.generate(tabId, s, i);
+      await this.triggerDownload(canvas, this.getFilename(s, i));
     }
   }
 
@@ -59,43 +75,77 @@ export class EditorComponent {
         await firstValueFrom(this.translate.get('ERRORS.SHARE_NOT_SUPPORTED'))
       );
 
-    const s = this.settings.value;
-    const i = this.downloadOption === 'img2' ? 1 : 0;
-    const canvas = await this.imageGen.generate(s, i);
+    const tabId = this.settings.activeTabId;
+    const s = this.settings.getFor(tabId);
+    const indices = this.getSelectedIndices();
 
-    canvas.toBlob(async (blob) => {
-      if (!blob) return;
+    const canvases = await Promise.all(
+      indices.map((i) => this.imageGen.generate(tabId, s, i))
+    );
 
-      const file = new File([blob], this.getFilename(i), { type: blob.type });
+    const filesMaybe = await Promise.all(
+      canvases.map((c, idx) =>
+        this.canvasToFile(c, this.getFilename(s, indices[idx]))
+      )
+    );
 
-      try {
-        const title = await firstValueFrom(this.translate.get('TITLE'));
-        await navigator.share({ files: [file], title });
-      } catch (e) {
-        alert(await firstValueFrom(this.translate.get('ERRORS.SHARE_FAILED')));
+    const files = filesMaybe.filter((f): f is File => !!f);
+    if (!files.length) return;
+
+    try {
+      const title = await firstValueFrom(this.translate.get('TITLE.' + tabId));
+
+      if (navigator.canShare({ files })) {
+        await navigator.share({ files, title });
+        return;
       }
-    });
+
+      if (files.length === 1 && navigator.canShare({ files: [files[0]] })) {
+        await navigator.share({ files: [files[0]], title });
+        return;
+      }
+
+      alert(
+        await firstValueFrom(this.translate.get('ERRORS.SHARE_NOT_SUPPORTED'))
+      );
+    } catch {
+      alert(await firstValueFrom(this.translate.get('ERRORS.SHARE_FAILED')));
+    }
   }
 
   public isMobile(): boolean {
     return window.innerWidth < 600;
   }
 
+  private async canvasToFile(
+    canvas: HTMLCanvasElement,
+    filename: string
+  ): Promise<File | null> {
+    const blob: Blob | null = await new Promise((resolve) =>
+      canvas.toBlob(resolve, 'image/png')
+    );
+    if (!blob) return null;
+    return new File([blob], filename, { type: blob.type || 'image/png' });
+  }
+
   private getSelectedIndices(): number[] {
     switch (this.downloadOption) {
-      case 'img1':
+      case 'IMG1':
         return [0];
-      case 'img2':
+      case 'IMG2':
         return [1];
-      case 'all':
       default:
         return [0, 1];
     }
   }
 
-  private getFilename(index: number): string {
-    const s = this.settings.value;
-    return `neon_black_${s.date}_${s.format}_image${index + 1}.png`;
+  private getFilename(
+    s: { date: string; format: string },
+    index: number
+  ): string {
+    const tabId = this.settings.activeTabId;
+    const prefix = tabId === 'NEON' ? 'neon' : 'neon_black';
+    return `${prefix}_${s.date}_${s.format}_image${index + 1}.png`;
   }
 
   private async triggerDownload(
@@ -116,5 +166,14 @@ export class EditorComponent {
     a.click();
     a.remove();
     URL.revokeObjectURL(url);
+  }
+
+  private getIndexById(id: TabId): number {
+    const i = this.tabs.indexOf(id);
+    return i >= 0 ? i : 0;
+  }
+
+  private getIdByIndex(index: number): TabId {
+    return this.tabs[index] ?? this.tabs[0];
   }
 }

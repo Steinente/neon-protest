@@ -12,6 +12,13 @@
   font-style: normal;
 }
 
+@font-face {
+  font-family: 'FeelGood';
+  src: url('assets/fonts/Feel Good.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
 // Pseudo-classes and variables
 :root {
   --md-sys-color-background: rgb(0, 0, 0);
@@ -135,10 +142,6 @@ button {
   display: flex;
   align-items: center;
   justify-content: center;
-}
-
-.uppercase {
-  text-transform: uppercase;
 }
 
 .red-on-hover:hover {

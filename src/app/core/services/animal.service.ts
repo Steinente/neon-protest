@@ -1,41 +1,108 @@
-import { Injectable } from '@angular/core';
-import { Animal } from '../models/animal.model';
+import { Injectable } from '@angular/core'
+import { Animal } from '../models/animal.model'
+import { TabId } from '../models/settings.model'
+
+const BASE_PATHS = {
+  neonBlack: 'assets/animals/neon_black',
+  neon: 'assets/animals/neon',
+} as const;
+
+const NEON_BLACK_NAMES = [
+  'BUDGIE',
+  'BUMBLEBEE',
+  'CHIMPANZEE',
+  'COW_HORNED',
+  'COW_POLLED',
+  'DOG_BEAGLE',
+  'DOG_BOSTON_TERRIER',
+  'DUCK',
+  'FERRET',
+  'FISH',
+  'GUINEA_PIG',
+  'HORSE',
+  'LAMB',
+  'LOBSTER',
+  'MOUSE',
+  'OCTOPUS',
+  'PIGLET',
+  'CAT',
+  'RABBIT',
+  'RAM',
+  'RED_DEER',
+  'ROOSTER',
+  'SHEEP',
+  'TURKEY',
+  'WILD_BOAR',
+] as const;
+
+export type NeonBlackName = (typeof NEON_BLACK_NAMES)[number];
+
+const NEON_NAMES = [
+  'BIRD',
+  'COW_AND_CALF',
+  'DOG',
+  'FISH',
+  'GOAT',
+  'HORSE',
+  'MOUSE',
+  'PIG',
+  'RABBIT',
+  'ROOSTER',
+  'SHEEP',
+] as const;
+
+export type NeonName = (typeof NEON_NAMES)[number];
 
 @Injectable({ providedIn: 'root' })
 export class AnimalService {
-  private animals: Animal[] = [
-    { name: 'BUDGIE', image: 'assets/animals/budgie.jpg' },
-    { name: 'BUMBLEBEE', image: 'assets/animals/bumblebee.jpg' },
-    { name: 'CHIMPANZEE', image: 'assets/animals/chimpanzee.jpg' },
-    { name: 'COW_HORNED', image: 'assets/animals/cow_horned.jpg' },
-    { name: 'COW_POLLED', image: 'assets/animals/cow_polled.jpg' },
-    { name: 'DOG_BEAGLE', image: 'assets/animals/dog_beagle.jpg' },
-    { name: 'DOG_BOSTON_TERRIER', image: 'assets/animals/dog_boston_terrier.jpg' },
-    { name: 'DUCK', image: 'assets/animals/duck.jpg' },
-    { name: 'FERRET', image: 'assets/animals/ferret.jpg' },
-    { name: 'FISH', image: 'assets/animals/fish.jpg' },
-    { name: 'GUINEA_PIG', image: 'assets/animals/guinea_pig.jpg' },
-    { name: 'HORSE', image: 'assets/animals/horse.jpg' },
-    { name: 'LAMB', image: 'assets/animals/lamb.jpg' },
-    { name: 'LOBSTER', image: 'assets/animals/lobster.jpg' },
-    { name: 'MOUSE', image: 'assets/animals/mouse.jpg' },
-    { name: 'OCTOPUS', image: 'assets/animals/octopus.jpg' },
-    { name: 'PIGLET', image: 'assets/animals/piglet.jpg' },
-    { name: 'CAT', image: 'assets/animals/cat.jpg' },
-    { name: 'RABBIT', image: 'assets/animals/rabbit.jpg' },
-    { name: 'RAM', image: 'assets/animals/ram.jpg' },
-    { name: 'RED_DEER', image: 'assets/animals/red_deer.jpg' },
-    { name: 'ROOSTER', image: 'assets/animals/rooster.jpg' },
-    { name: 'SHEEP', image: 'assets/animals/sheep.jpg' },
-    { name: 'TURKEY', image: 'assets/animals/turkey.jpg' },
-    { name: 'WILD_BOAR', image: 'assets/animals/wild_boar.jpg' },
-  ];
+  private readonly neonBlackAnimals: ReadonlyArray<Animal>;
+  private readonly neonAnimals: ReadonlyArray<Animal>;
 
-  getAll(): Animal[] {
-    return this.animals;
+  constructor() {
+    this.neonBlackAnimals = this.buildAnimals(
+      NEON_BLACK_NAMES,
+      BASE_PATHS.neonBlack,
+      'jpg'
+    );
+    this.neonAnimals = this.buildAnimals(NEON_NAMES, BASE_PATHS.neon, 'png');
   }
 
-  getByName(name: string): Animal | undefined {
-    return this.animals.find((a) => a.name === name);
+  public getAll(tabId: TabId): ReadonlyArray<Animal> {
+    return tabId === 'NEON_BLACK' ? this.neonBlackAnimals : this.neonAnimals;
+  }
+
+  public getByName(tabId: TabId, name: string): Animal | undefined {
+    const list = this.getAll(tabId);
+    return list.find((a) => a.name.toLowerCase() === name.toLowerCase());
+  }
+
+  public getAllNeonBlack(): ReadonlyArray<Animal> {
+    return this.neonBlackAnimals;
+  }
+
+  public getByNeonBlackName(name: NeonBlackName | string): Animal | undefined {
+    return this.neonBlackAnimals.find(
+      (a) => a.name.toLowerCase() === name.toLowerCase()
+    );
+  }
+
+  public getAllNeon(): ReadonlyArray<Animal> {
+    return this.neonAnimals;
+  }
+
+  public getByNeonName(name: NeonName | string): Animal | undefined {
+    const key = name.toLowerCase();
+    return this.neonAnimals.find((a) => a.name.toLowerCase() === key);
+  }
+
+  private buildAnimals(
+    names: readonly string[],
+    basePath: string,
+    extension: string
+  ): ReadonlyArray<Animal> {
+    return names.map((name) => ({
+      name,
+      image: `${basePath}/${name.toLowerCase()}.${extension}`,
+    }));
   }
 }

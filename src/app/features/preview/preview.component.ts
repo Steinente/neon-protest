@@ -67,21 +67,22 @@ export class PreviewComponent implements AfterViewInit {
   public set currentIndex(n: number) {
     this.current = n;
     this.showAll = false;
-
     this.cdr.detectChanges();
     setTimeout(() => this.renderCurrent(), 0);
   }
 
   public get canvasFormatClass(): string {
-    return this.settingsService.value.format;
+    const tabId = this.settingsService.activeTabId;
+    return this.settingsService.getFor(tabId).format;
   }
 
   private async renderCurrent(): Promise<void> {
     const canvas = this.getCanvasRef(this.current);
     if (!canvas) return;
 
-    const settings = this.settingsService.value;
-    const offscreen = await this.imageGen.generate(settings, this.current);
+    const tabId = this.settingsService.activeTabId;
+    const s = this.settingsService.getFor(tabId);
+    const offscreen = await this.imageGen.generate(tabId, s, this.current);
 
     this.copyCanvas(offscreen, canvas);
     this.applyAspectRatio(canvas);
@@ -94,10 +95,12 @@ export class PreviewComponent implements AfterViewInit {
   }
 
   private async renderAll(): Promise<void> {
-    const settings = this.settingsService.value;
+    const tabId = this.settingsService.activeTabId;
+    const s = this.settingsService.getFor(tabId);
+
     const [c1, c2] = await Promise.all([
-      this.imageGen.generate(settings, 0),
-      this.imageGen.generate(settings, 1),
+      this.imageGen.generate(tabId, s, 0),
+      this.imageGen.generate(tabId, s, 1),
     ]);
 
     const canvas1 = this.canvasAll1Ref?.nativeElement;
@@ -114,7 +117,6 @@ export class PreviewComponent implements AfterViewInit {
   private copyCanvas(src: HTMLCanvasElement, dest: HTMLCanvasElement): void {
     dest.width = src.width;
     dest.height = src.height;
-
     const ctx = dest.getContext('2d');
     if (ctx) {
       ctx.clearRect(0, 0, dest.width, dest.height);
@@ -123,12 +125,12 @@ export class PreviewComponent implements AfterViewInit {
   }
 
   private applyAspectRatio(canvas: HTMLCanvasElement): void {
+    const tabId = this.settingsService.activeTabId;
+    const format = this.settingsService.getFor(tabId).format;
     const ratioMap: Record<string, string> = {
       story: '9 / 16',
       profile: '4 / 5',
     };
-
-    canvas.style.aspectRatio =
-      ratioMap[this.settingsService.value.format] || '';
+    canvas.style.aspectRatio = ratioMap[format] || '';
   }
 }

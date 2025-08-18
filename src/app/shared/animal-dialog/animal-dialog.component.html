@@ -2,17 +2,18 @@
   <div class="dialog-content" (click)="$event.stopPropagation()">
     <h2>{{ "SELECT_ANIMAL" | translate }}</h2>
     <div class="animal-grid">
+      @for (animal of list; track animal.name) {
       <div
-        *ngFor="let animal of animals"
         class="animal-item pointer"
         [class.selected]="animal.name === selectedAnimal"
         (click)="selectAnimal(animal)"
       >
         <img [src]="animal.image" [alt]="animal.name" />
         <div class="animal-name">
-          {{ "ANIMALS." + animal.name | translate }}
+          {{ "ANIMALS." + tabId + "." + animal.name | translate }}
         </div>
       </div>
+      }
     </div>
     <button (click)="close.emit()" class="close-btn pointer">
       {{ "CLOSE" | translate }}

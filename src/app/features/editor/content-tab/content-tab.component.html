@@ -1,12 +1,12 @@
+@if (form) {
 <form [formGroup]="form">
-  <!-- Format selection -->
   <mat-button-toggle-group formControlName="format">
-    <mat-button-toggle class="red-on-hover" value="profile">{{
-      "PROFILE" | translate
-    }}</mat-button-toggle>
-    <mat-button-toggle class="red-on-hover" value="story">{{
-      "STORY" | translate
-    }}</mat-button-toggle>
+    <mat-button-toggle class="red-on-hover" value="PROFILE">
+      {{ "PROFILE" | translate }}
+    </mat-button-toggle>
+    <mat-button-toggle class="red-on-hover" value="STORY">
+      {{ "STORY" | translate }}
+    </mat-button-toggle>
   </mat-button-toggle-group>
 
   <!-- Date selection -->
@@ -34,25 +34,22 @@
     <mat-form-field appearance="fill">
       <mat-label>{{ "TIME_FROM" | translate }}</mat-label>
       <mat-select class="red-on-hover" formControlName="from">
-        <mat-option
-          class="red-on-hover"
-          *ngFor="let time of times"
-          [value]="time"
-        >
+        @for (time of times; track time) {
+        <mat-option class="red-on-hover" [value]="time">
           {{ formatTime(time) }}
         </mat-option>
+        }
       </mat-select>
     </mat-form-field>
+
     <mat-form-field appearance="fill">
       <mat-label>{{ "TIME_TO" | translate }}</mat-label>
       <mat-select class="red-on-hover" formControlName="to">
-        <mat-option
-          class="red-on-hover"
-          *ngFor="let time of times"
-          [value]="time"
-        >
+        @for (time of times; track time) {
+        <mat-option class="red-on-hover" [value]="time">
           {{ formatTime(time) }}
         </mat-option>
+        }
       </mat-select>
     </mat-form-field>
   </div>
@@ -70,7 +67,9 @@
       matInput
       readonly
       (click)="openAnimalDialog()"
-      [value]="animalName ? ('ANIMALS.' + animalName | translate) : ''"
+      [value]="
+        animalName ? ('ANIMALS.' + tabId + '.' + animalName | translate) : ''
+      "
       class="red-on-hover pointer"
     />
     <button
@@ -84,11 +83,12 @@
     </button>
   </mat-form-field>
 </form>
-
+} @if (animalDialogOpen) {
 <!-- Animal selection dialog -->
 <app-animal-dialog
-  *ngIf="animalDialogOpen"
+  [tabId]="tabId"
   [selectedAnimal]="selectedAnimal"
   (select)="selectAnimal($event)"
   (close)="animalDialogOpen = false"
 />
+}

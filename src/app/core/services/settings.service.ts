@@ -1,47 +1,142 @@
 import { Injectable } from '@angular/core'
 import { BehaviorSubject, Subscription } from 'rxjs'
-import { AppSettings } from '../models/settings.model'
+import { AppSettingsPerTab, AppState, TabId } from '../models/settings.model'
 import { StorageService } from './storage.service'
 
 @Injectable({ providedIn: 'root' })
 export class SettingsService {
-  private settings$: BehaviorSubject<AppSettings>;
+  private state$: BehaviorSubject<AppState>;
 
   constructor(private storage: StorageService) {
     const loaded = this.storage.load();
-    this.settings$ = new BehaviorSubject<AppSettings>(
-      loaded || this.getDefault()
-    );
+    const state = this.migrateOrDefault(loaded);
+    this.state$ = new BehaviorSubject<AppState>(state);
   }
 
-  get value(): AppSettings {
-    return this.settings$.value;
+  get state(): AppState {
+    return this.state$.value;
   }
 
-  subscribe(fn: (settings: AppSettings) => void): Subscription {
-    return this.settings$.subscribe(fn);
+  get activeTabId(): TabId {
+    return this.state.activeTabId;
   }
 
-  update(partial: Partial<AppSettings>): void {
-    const newSettings = { ...this.value, ...partial };
-    this.settings$.next(newSettings);
-    this.storage.save(newSettings);
+  get lang(): AppState['lang'] {
+    return this.state.lang;
   }
 
-  set(settings: AppSettings): void {
-    this.settings$.next(settings);
-    this.storage.save(settings);
+  setLang(lang: AppState['lang']): void {
+    const next: AppState = { ...this.state, lang };
+    this.state$.next(next);
+    this.storage.save(next);
   }
 
-  getDefault(): AppSettings {
+  getFor(tabId: TabId): AppSettingsPerTab {
+    return this.state.tabs[tabId];
+  }
+
+  subscribe(fn: (state: AppState) => void): Subscription {
+    return this.state$.subscribe(fn);
+  }
+
+  setActiveTab(tabId: TabId): void {
+    if (tabId === this.state.activeTabId) return;
+    const next: AppState = { ...this.state, activeTabId: tabId };
+    this.state$.next(next);
+    this.storage.save(next);
+  }
+
+  updateFor(tabId: TabId, partial: Partial<AppSettingsPerTab>): void {
+    const cur = this.getFor(tabId);
+    const nextTab = { ...cur, ...partial };
+    const next: AppState = {
+      ...this.state,
+      tabs: { ...this.state.tabs, [tabId]: nextTab },
+    };
+    this.state$.next(next);
+    this.storage.save(next);
+  }
+
+  setFor(tabId: TabId, settings: AppSettingsPerTab): void {
+    const next: AppState = {
+      ...this.state,
+      tabs: { ...this.state.tabs, [tabId]: settings },
+    };
+    this.state$.next(next);
+    this.storage.save(next);
+  }
+
+  private migrateOrDefault(raw: any): AppState {
+    if (raw && raw.activeTabId && raw.tabs && typeof raw.lang === 'string') {
+      return raw as AppState;
+    }
+
+    if (raw && raw.activeTabId && raw.tabs) {
+      const active: TabId = raw.activeTabId || 'NEON_BLACK';
+      const fromActive = raw.tabs?.[active]?.lang;
+      const fallback =
+        raw.tabs?.NEON_BLACK?.lang || raw.tabs?.NEON?.lang || 'de';
+
+      const strip = (t: any): AppSettingsPerTab => ({
+        format: t.format || 'PROFILE',
+        date: t.date || new Date().toISOString().slice(0, 10),
+        from: t.from || '13:00',
+        to: t.to || '16:00',
+        place: t.place || '',
+        animal: t.animal || '',
+        elements: t.elements || [],
+      });
+
+      return {
+        activeTabId: active,
+        lang: fromActive || fallback,
+        tabs: {
+          NEON_BLACK: strip(raw.tabs.NEON_BLACK || {}),
+          NEON: strip(raw.tabs.NEON || {}),
+        },
+      };
+    }
+
+    if (raw && (raw.tabId || raw.format || raw.date)) {
+      const lang = raw.lang || 'de';
+      const neonBlack: AppSettingsPerTab = {
+        format: raw.format || 'PROFILE',
+        date: raw.date || new Date().toISOString().slice(0, 10),
+        from: raw.from || '13:00',
+        to: raw.to || '16:00',
+        place: raw.place || '',
+        animal: raw.animal || '',
+        elements: raw.elements || [],
+      };
+      return {
+        activeTabId: raw.tabId || 'NEON_BLACK',
+        lang,
+        tabs: { NEON_BLACK: neonBlack, NEON: this.makeDefaultPerTab() },
+      };
+    }
+
+    return this.getDefaultState();
+  }
+
+  private getDefaultState(): AppState {
     return {
-      format: 'profile',
+      activeTabId: 'NEON_BLACK',
+      lang: 'de',
+      tabs: {
+        NEON_BLACK: this.makeDefaultPerTab(),
+        NEON: this.makeDefaultPerTab(),
+      },
+    };
+  }
+
+  private makeDefaultPerTab(): AppSettingsPerTab {
+    return {
+      format: 'PROFILE',
       date: new Date().toISOString().slice(0, 10),
       from: '13:00',
       to: '16:00',
       place: '',
       animal: '',
-      lang: 'de',
       elements: [],
     };
   }
