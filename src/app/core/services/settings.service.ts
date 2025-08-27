@@ -75,7 +75,7 @@ export class SettingsService {
       const active: TabId = raw.activeTabId || 'NEON_BLACK';
       const fromActive = raw.tabs?.[active]?.lang;
       const fallback =
-        raw.tabs?.NEON_BLACK?.lang || raw.tabs?.NEON?.lang || 'de';
+        raw.tabs?.NEON_BLACK?.lang || raw.tabs?.NEON?.lang || 'en';
 
       const strip = (t: any): AppSettingsPerTab => ({
         format: t.format || 'PROFILE',
@@ -98,7 +98,7 @@ export class SettingsService {
     }
 
     if (raw && (raw.tabId || raw.format || raw.date)) {
-      const lang = raw.lang || 'de';
+      const lang = raw.lang || 'en';
       const neonBlack: AppSettingsPerTab = {
         format: raw.format || 'PROFILE',
         date: raw.date || new Date().toISOString().slice(0, 10),
@@ -121,7 +121,7 @@ export class SettingsService {
   private getDefaultState(): AppState {
     return {
       activeTabId: 'NEON_BLACK',
-      lang: 'de',
+      lang: 'en',
       tabs: {
         NEON_BLACK: this.makeDefaultPerTab(),
         NEON: this.makeDefaultPerTab(),

@@ -1,0 +1,77 @@
+{
+  "TITLE": {
+    "NEON": "NEON",
+    "NEON_BLACK": "NEON Black"
+  },
+  "SUBTITLE": "FYRIR HÖND DÝRANNA",
+  "PROFILE": "PRÓFÍLL",
+  "STORY": "SAGA",
+  "DATE": "DAGSETNING",
+  "TIME_FROM": "FRÁ",
+  "TIME_TO": "TIL",
+  "PLACE": "STAÐUR",
+  "SELECT_ANIMAL": "VELJA DÝR",
+  "DOWNLOAD_ALL": "SÍÐA ALLT",
+  "DOWNLOAD_IMAGE_1": "SÍÐA MYND 1",
+  "DOWNLOAD_IMAGE_2": "SÍÐA MYND 2",
+  "SHARE": "DEILA",
+  "IMAGE_1": "MYND 1",
+  "IMAGE_2": "MYND 2",
+  "OVERVIEW": "YFIRSÝN",
+  "SOON_PROTEST": {
+    "NEON": "NÆSTA               \nFER FRAM FLJÓTLEGA!",
+    "NEON_BLACK": "NÆSTA               \nBLACK FER FRAM FLJÓTLEGA!"
+  },
+  "SOON_CITY": {
+    "NEON": "NEON ER Einnig AÐ KOMA BRÁÐLEGA TIL ÞÍN Í BÆ. TIL AÐ TAKA FASTA OG RÓTTÆKA AFSTÖÐU FYRIR FRELSI ANNARRA DÝRA OG TIL AÐ FRÆÐA FÓLK UM VEGAN GILDIKERFI.\n\nVILTU TAKA ÞÁTT? SENDU OKKUR SKILABOÐ OG TAKTU ÞÁTT!",
+    "NEON_BLACK": "NEON BLACK ER Einnig AÐ KOMA BRÁÐLEGA TIL ÞÍN Í BÆ. TIL AÐ TAKA FASTA OG RÓTTÆKA AFSTÖÐU FYRIR FRELSI ANNARRA DÝRA OG TIL AÐ FRÆÐA FÓLK UM VEGAN GILDIKERFI.\n\nVILTU TAKA ÞÁTT? SENDU OKKUR SKILABOÐ OG TAKTU ÞÁTT!"
+  },
+  "ABOUT": "ÞESSI FORRITUN ER Í VIRKRI ÞRÓUN.\nEF ÞÚ REKST Á VILLUR, HEFUR TILLÖGUR EÐA SPURNINGAR, ENDILEGA HAFAÐU SAMBAND:",
+  "CLOSE": "LOKA",
+  "ANIMALS": {
+    "NEON_BLACK": {
+      "BUDGIE": "BJARGSKRÍMSLI",
+      "BUMBLEBEE": "HUMLA",
+      "CAT": "KÖTTUR",
+      "CHIMPANZEE": "SJIMPANSI",
+      "COW_HORNED": "KÚ (MEÐ HORN)",
+      "COW_POLLED": "KÚ (ÁN HORNA)",
+      "DOG_BEAGLE": "HUNDUR (BEAGLE)",
+      "DOG_BOSTON_TERRIER": "HUNDUR (BOSTON TERRIER)",
+      "DUCK": "ÖND",
+      "FERRET": "FRETTUDÝR",
+      "FISH": "FISKUR",
+      "GUINEA_PIG": "MARSVIN",
+      "HORSE": "HESTUR",
+      "LAMB": "LAMB",
+      "LOBSTER": "HUMAR",
+      "MOUSE": "MÚS",
+      "OCTOPUS": "KOLKRABBI",
+      "PIGLET": "GRÍS",
+      "RABBIT": "KANÍNA",
+      "RAM": "HRÚTUR",
+      "RED_DEER": "HJÖRTUR",
+      "ROOSTER": "HANI",
+      "SHEEP": "SAUÐUR",
+      "TURKEY": "TÍNDILL",
+      "WILD_BOAR": "VILLISVÍN"
+    },
+    "NEON": {
+      "BIRD": "FUGL",
+      "COW_AND_CALF": "KÚ OG KÁLFFI",
+      "DOG": "HUNDUR",
+      "FISH": "FISKUR",
+      "GOAT": "GEIT",
+      "HORSE": "HESTUR",
+      "MOUSE": "MÚS",
+      "PIG": "SVÍN",
+      "RABBIT": "KANÍNA",
+      "ROOSTER": "HANI",
+      "SHEEP": "SAUÐUR"
+    }
+  },
+  "ERRORS": {
+    "SHARE_NOT_SUPPORTED": "DEILING EKKI STUDD",
+    "SHARE_FAILED": "DEILING MISTÓKST"
+  }
+}

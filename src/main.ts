@@ -9,6 +9,7 @@ import { provideAnimations } from '@angular/platform-browser/animations'
 import { TranslateLoader, TranslateModule } from '@ngx-translate/core'
 import { TranslateHttpLoader } from '@ngx-translate/http-loader'
 import { AppComponent } from './app/app.component'
+import { HtmlLangService } from './app/core/services/html-lang.service'
 
 export function HttpLoaderFactory(http: HttpClient) {
   return new TranslateHttpLoader(http, 'assets/i18n/', '.json');
@@ -21,7 +22,7 @@ bootstrapApplication(AppComponent, {
     provideNativeDateAdapter(),
     importProvidersFrom(
       TranslateModule.forRoot({
-        defaultLanguage: 'de',
+        defaultLanguage: 'en',
         loader: {
           provide: TranslateLoader,
           useFactory: HttpLoaderFactory,
@@ -29,6 +30,11 @@ bootstrapApplication(AppComponent, {
         },
       })
     ),
-    { provide: MAT_DATE_LOCALE, useValue: 'de-DE' },
+    { provide: MAT_DATE_LOCALE, useValue: 'en-GB' },
   ],
-}).catch((err) => console.error(err));
+})
+  .then((ref) => {
+    const langSvc = ref.injector.get(HtmlLangService);
+    langSvc.init();
+  })
+  .catch((err) => console.error(err));

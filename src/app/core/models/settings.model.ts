@@ -14,7 +14,7 @@ export interface AppSettingsPerTab {
 
 export interface AppState {
   activeTabId: TabId;
-  lang: 'de' | 'en' | 'fr';
+  lang: string;
   tabs: Record<TabId, AppSettingsPerTab>;
 }
 

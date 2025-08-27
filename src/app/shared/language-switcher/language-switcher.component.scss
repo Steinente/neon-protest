@@ -1,15 +1,7 @@
-mat-button-toggle-group {
+.lang-trigger {
   background: var(--md-sys-color-secondary);
   border-radius: 8px;
   font-weight: bold;
-}
-
-.mat-button-toggle-checked {
-  background: var(--md-sys-color-tertiary) !important;
-}
-
-mat-button-toggle:not(.mat-button-toggle-checked):hover {
-  color: var(--md-sys-color-tertiary);
 }
 
 .flag {
@@ -21,32 +13,12 @@ mat-button-toggle:not(.mat-button-toggle-checked):hover {
   display: inline-block;
 }
 
-@media (max-width: 1350px) {
-  mat-button-toggle-group {
-    zoom: 0.8;
-  }
+.name {
+  flex: 1;
+  margin-left: 6px;
 }
 
-@media (max-width: 1080px) {
-  mat-button-toggle-group {
-    zoom: 0.6;
-  }
-}
-
-@media (max-width: 959px) {
-  mat-button-toggle-group {
-    zoom: 1;
-  }
-}
-
-@media (max-width: 510px) {
-  mat-button-toggle-group {
-    zoom: 0.8;
-  }
-}
-
-@media (max-width: 400px) {
-  mat-button-toggle-group {
-    zoom: 0.65;
-  }
+.code {
+  opacity: 0.7;
+  font-variant-numeric: tabular-nums;
 }

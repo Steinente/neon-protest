@@ -1,14 +1,14 @@
-import { Injectable } from '@angular/core';
-import { TranslateService } from '@ngx-translate/core';
-import { firstValueFrom } from 'rxjs';
+import { Injectable } from '@angular/core'
+import { TranslateService } from '@ngx-translate/core'
+import { firstValueFrom } from 'rxjs'
 import {
   AppSettingsPerTab,
   FormatId,
   PositionedElement,
   TabId,
-} from '../models/settings.model';
-import { AnimalService } from './animal.service';
-import { SettingsService } from './settings.service';
+} from '../models/settings.model'
+import { AnimalService } from './animal.service'
+import { SettingsService } from './settings.service'
 
 type TextStyle = {
   font: string;
@@ -515,7 +515,7 @@ export class ImageGeneratorService {
   }
 
   private getDateTimeString(settingsPerTab: AppSettingsPerTab): string {
-    const lang = this.settings.lang || 'de';
+    const lang = this.settings.lang || 'en';
     const date = new Date(settingsPerTab.date);
 
     const parseTime = (timeStr: string) => {
@@ -533,15 +533,12 @@ export class ImageGeneratorService {
     const formatDate = (d: Date) => {
       switch (lang) {
         case 'de':
+        case 'is':
           return `${pad(d.getDate())}.${pad(d.getMonth() + 1)}.${d
             .getFullYear()
             .toString()
             .slice(-2)}`;
         case 'fr':
-          return `${pad(d.getDate())}/${pad(d.getMonth() + 1)}/${d
-            .getFullYear()
-            .toString()
-            .slice(-2)}`;
         case 'en':
         default:
           return `${pad(d.getDate())}/${pad(d.getMonth() + 1)}/${d

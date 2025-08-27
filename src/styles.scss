@@ -1,20 +1,20 @@
 @font-face {
-  font-family: 'Punk';
-  src: url('assets/fonts/Punk_s_not_dead.ttf') format('truetype');
+  font-family: "Punk";
+  src: url("assets/fonts/Punk_s_not_dead.ttf") format("truetype");
   font-weight: normal;
   font-style: normal;
 }
 
 @font-face {
-  font-family: 'Chainprinter';
-  src: url('assets/fonts/Chainprinter Regular.ttf') format('truetype');
+  font-family: "Chainprinter";
+  src: url("assets/fonts/Chainprinter Regular.ttf") format("truetype");
   font-weight: normal;
   font-style: normal;
 }
 
 @font-face {
-  font-family: 'FeelGood';
-  src: url('assets/fonts/Feel Good.ttf') format('truetype');
+  font-family: "FeelGood";
+  src: url("assets/fonts/Feel Good.ttf") format("truetype");
   font-weight: normal;
   font-style: normal;
 }
@@ -36,6 +36,9 @@
 
   --md-sys-color-error: rgb(227, 0, 11);
   --md-sys-color-on-error: rgb(255, 255, 255);
+
+  --lang-item-size: 48px;
+  --lang-max-visible: 7;
 }
 
 ::-webkit-scrollbar {
@@ -54,14 +57,15 @@
 }
 
 // Global styles
-html, body {
+html,
+body {
   height: 100%;
   margin: 0;
   padding: 0;
   box-sizing: border-box;
   background: var(--md-sys-color-background);
   color: var(--md-sys-color-on-background);
-  font-family: 'Chainprinter', 'Roboto', Arial, sans-serif;
+  font-family: "Chainprinter", "Roboto", Arial, sans-serif;
   overscroll-behavior: none;
 }
 
@@ -137,6 +141,17 @@ button {
   border-radius: 8px;
 }
 
+.mat-mdc-menu-panel.lang-menu {
+  max-inline-size: 90vw;
+  max-width: 90vw;
+}
+
+.mat-mdc-menu-panel.lang-menu .mat-mdc-menu-content {
+  max-height: calc(var(--lang-item-size) * var(--lang-max-visible));
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
 // Utility classes
 .center {
   display: flex;
@@ -154,7 +169,8 @@ button {
 
 // Responsive styles
 @media (max-width: 600px) {
-  html, body {
+  html,
+  body {
     font-size: 15px;
   }
 

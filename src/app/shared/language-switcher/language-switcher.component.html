@@ -1,14 +1,15 @@
-<mat-button-toggle-group [value]="lang" (change)="switchLang($event.value)">
-  <mat-button-toggle value="de">
-    <span class="flag-icon flag-icon-de flag"></span>
-    DE
-  </mat-button-toggle>
-  <mat-button-toggle value="en">
-    <span class="flag-icon flag-icon-gb flag"></span>
-    EN
-  </mat-button-toggle>
-  <mat-button-toggle value="fr">
-    <span class="flag-icon flag-icon-fr flag"></span>
-    FR
-  </mat-button-toggle>
-</mat-button-toggle-group>
+<button mat-button [matMenuTriggerFor]="langMenu" class="lang-trigger">
+  <span class="flag-icon flag-icon-{{currentFlag}} flag"></span>
+  {{ lang.toUpperCase() }}
+</button>
+
+<mat-menu #langMenu="matMenu" class="lang-menu">
+  <div class="lang-panel">
+    <mat-nav-list class="lang-scroll">
+      <a mat-list-item *ngFor="let l of langs" (click)="switchLang(l.code)">
+        <span class="flag-icon flag-icon-{{l.flag}} flag"></span>
+        <span class="name">{{ l.name }}</span>
+      </a>
+    </mat-nav-list>
+  </div>
+</mat-menu>

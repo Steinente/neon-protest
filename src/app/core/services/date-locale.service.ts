@@ -6,8 +6,13 @@ export class DateLocaleService {
   private dateAdapter = inject(DateAdapter);
 
   setLocale(lang: string) {
-    const locale = lang === 'de' ? 'de-DE' : lang === 'en' ? 'en-GB' : 'fr-FR';
-
+    const map: Record<string, string> = {
+      de: 'de-DE',
+      en: 'en-GB',
+      fr: 'fr-FR',
+      is: 'en-GB', // is-IS does not work
+    };
+    const locale = map[lang] ?? lang;
     this.dateAdapter.setLocale(locale);
   }
 }

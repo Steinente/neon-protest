@@ -71,7 +71,17 @@ export class ContentTabComponent implements OnInit, OnChanges, OnDestroy {
     const date = new Date();
     date.setHours(hours, minutes);
     const lang = this.settings.state.lang;
-    return new Intl.DateTimeFormat(lang === 'en' ? 'en-US' : 'de-DE', {
+
+    const locale =
+      lang === 'de'
+        ? 'de-DE'
+        : lang === 'fr'
+        ? 'fr-FR'
+        : lang === 'is'
+        ? 'is-IS'
+        : 'en-GB';
+
+    return new Intl.DateTimeFormat(locale, {
       hour: 'numeric',
       minute: '2-digit',
       hour12: lang === 'en',
