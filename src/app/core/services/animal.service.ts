@@ -76,25 +76,6 @@ export class AnimalService {
     return list.find((a) => a.name.toLowerCase() === name.toLowerCase());
   }
 
-  public getAllNeonBlack(): ReadonlyArray<Animal> {
-    return this.neonBlackAnimals;
-  }
-
-  public getByNeonBlackName(name: NeonBlackName | string): Animal | undefined {
-    return this.neonBlackAnimals.find(
-      (a) => a.name.toLowerCase() === name.toLowerCase()
-    );
-  }
-
-  public getAllNeon(): ReadonlyArray<Animal> {
-    return this.neonAnimals;
-  }
-
-  public getByNeonName(name: NeonName | string): Animal | undefined {
-    const key = name.toLowerCase();
-    return this.neonAnimals.find((a) => a.name.toLowerCase() === key);
-  }
-
   private buildAnimals(
     names: readonly string[],
     basePath: string,
