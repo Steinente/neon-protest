@@ -3,13 +3,9 @@
   {{ lang.toUpperCase() }}
 </button>
 
-<mat-menu #langMenu="matMenu" class="lang-menu">
-  <div class="lang-panel">
-    <mat-nav-list class="lang-scroll">
-      <a mat-list-item *ngFor="let l of langs" (click)="switchLang(l.code)">
-        <span class="flag-icon flag-icon-{{l.flag}} flag"></span>
-        <span class="name">{{ l.name }}</span>
-      </a>
-    </mat-nav-list>
-  </div>
+<mat-menu #langMenu="matMenu" panelClass="lang-menu-panel">
+  <button mat-menu-item *ngFor="let l of langs" (click)="switchLang(l.code)">
+    <span class="flag-icon flag-icon-{{l.flag}} flag"></span>
+    <span class="name">{{ l.name }}</span>
+  </button>
 </mat-menu>
