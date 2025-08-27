@@ -10,7 +10,9 @@ export class DateLocaleService {
       de: 'de-DE',
       en: 'en-GB',
       fr: 'fr-FR',
+      hu: 'hu-HU',
       is: 'en-GB', // is-IS does not work
+      pl: 'pl-PL',
     };
     const locale = map[lang] ?? lang;
     this.dateAdapter.setLocale(locale);

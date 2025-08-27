@@ -1,11 +1,13 @@
 <button mat-button [matMenuTriggerFor]="langMenu" class="lang-trigger">
-  <span class="flag-icon flag-icon-{{currentFlag}} flag"></span>
+  <span class="flag-icon flag-icon-{{ currentFlag }} flag"></span>
   {{ lang.toUpperCase() }}
 </button>
 
 <mat-menu #langMenu="matMenu" panelClass="lang-menu-panel">
-  <button mat-menu-item *ngFor="let l of langs" (click)="switchLang(l.code)">
-    <span class="flag-icon flag-icon-{{l.flag}} flag"></span>
+  @for (l of langs; track l.code) {
+  <button mat-menu-item (click)="switchLang(l.code)">
+    <span class="flag-icon flag-icon-{{ l.flag }} flag"></span>
     <span class="name">{{ l.name }}</span>
   </button>
+  }
 </mat-menu>

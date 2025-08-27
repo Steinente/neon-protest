@@ -79,6 +79,10 @@ export class ContentTabComponent implements OnInit, OnChanges, OnDestroy {
         ? 'fr-FR'
         : lang === 'is'
         ? 'is-IS'
+        : lang === 'pl'
+        ? 'pl-PL'
+        : lang === 'hu'
+        ? 'hu-HU'
         : 'en-GB';
 
     return new Intl.DateTimeFormat(locale, {

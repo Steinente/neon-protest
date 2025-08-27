@@ -81,7 +81,10 @@ export class ImageGeneratorService {
     if (tabId === 'NEON') {
       elements = elements.map((el) =>
         el.value
-          ? { ...el, value: el.value.toLocaleLowerCase(this.settings.lang) }
+          ? {
+              ...el,
+              value: el.value.replace(/[A-Z]/g, (c) => c.toLowerCase()),
+            }
           : el
       );
     }
@@ -534,10 +537,15 @@ export class ImageGeneratorService {
       switch (lang) {
         case 'de':
         case 'is':
+        case 'pl':
           return `${pad(d.getDate())}.${pad(d.getMonth() + 1)}.${d
             .getFullYear()
             .toString()
             .slice(-2)}`;
+        case 'hu':
+          return `${d.getFullYear()}. ${pad(d.getMonth() + 1)}. ${pad(
+            d.getDate()
+          )}.`;
         case 'fr':
         case 'en':
         default:

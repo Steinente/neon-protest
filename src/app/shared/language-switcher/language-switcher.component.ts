@@ -38,6 +38,8 @@ export class LanguageSwitcherComponent implements OnInit, OnDestroy {
     { code: 'en', name: 'English', flag: 'gb' },
     { code: 'fr', name: 'Français', flag: 'fr' },
     { code: 'is', name: 'Íslenska', flag: 'is' },
+    { code: 'hu', name: 'Magyar', flag: 'hu' },
+    { code: 'pl', name: 'Polski', flag: 'pl' },
   ];
 
   constructor(
