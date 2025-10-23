@@ -1,7 +1,7 @@
 // storage.service.ts
 import { Injectable } from '@angular/core'
 
-const STORAGE_KEY = 'neon_black_app_settings';
+const STORAGE_KEY = 'neon_protest_app_settings';
 
 @Injectable({ providedIn: 'root' })
 export class StorageService {

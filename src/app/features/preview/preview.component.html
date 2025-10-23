@@ -17,17 +17,19 @@
     </button>
   </div>
 
-  <ng-container *ngIf="!showAll">
-    <ng-container [ngSwitch]="current">
-      <canvas *ngSwitchCase="0" #canvas1 [ngClass]="canvasFormatClass"></canvas>
-      <canvas *ngSwitchCase="1" #canvas2 [ngClass]="canvasFormatClass"></canvas>
-    </ng-container>
-  </ng-container>
+  @if (!showAll) {
+    @switch (current) {
+      @case (0) { <canvas #canvas1 [ngClass]="canvasFormatClass"></canvas> }
+      @case (1) { <canvas #canvas2 [ngClass]="canvasFormatClass"></canvas> }
+    }
+  }
 
-  <div class="popup-all" *ngIf="showAll" (click)="closeAll()">
-    <div class="canvas-container" (click)="$event.stopPropagation()">
-      <canvas #canvasAll1 [ngClass]="canvasFormatClass"></canvas>
-      <canvas #canvasAll2 [ngClass]="canvasFormatClass"></canvas>
+  @if (showAll) {
+    <div class="popup-all" (click)="closeAll()">
+      <div class="canvas-container" (click)="$event.stopPropagation()">
+        <canvas #canvasAll1 [ngClass]="canvasFormatClass"></canvas>
+        <canvas #canvasAll2 [ngClass]="canvasFormatClass"></canvas>
+      </div>
     </div>
-  </div>
+  }
 </div>

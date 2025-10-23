@@ -72,10 +72,10 @@ export class SettingsService {
     }
 
     if (raw && raw.activeTabId && raw.tabs) {
-      const active: TabId = raw.activeTabId || 'NEON_BLACK';
+      const active: TabId = raw.activeTabId || 'NEON_PROTEST';
       const fromActive = raw.tabs?.[active]?.lang;
       const fallback =
-        raw.tabs?.NEON_BLACK?.lang || raw.tabs?.NEON?.lang || 'en';
+        raw.tabs?.NEON_PROTEST?.lang || raw.tabs?.PRIDE_PROTEST?.lang || 'en';
 
       const strip = (t: any): AppSettingsPerTab => ({
         format: t.format || 'PROFILE',
@@ -91,15 +91,15 @@ export class SettingsService {
         activeTabId: active,
         lang: fromActive || fallback,
         tabs: {
-          NEON_BLACK: strip(raw.tabs.NEON_BLACK || {}),
-          NEON: strip(raw.tabs.NEON || {}),
+          NEON_PROTEST: strip(raw.tabs.NEON_PROTEST || {}),
+          PRIDE_PROTEST: strip(raw.tabs.PRIDE_PROTEST || {}),
         },
       };
     }
 
     if (raw && (raw.tabId || raw.format || raw.date)) {
       const lang = raw.lang || 'en';
-      const neonBlack: AppSettingsPerTab = {
+      const neonProtest: AppSettingsPerTab = {
         format: raw.format || 'PROFILE',
         date: raw.date || new Date().toISOString().slice(0, 10),
         from: raw.from || '13:00',
@@ -109,9 +109,9 @@ export class SettingsService {
         elements: raw.elements || [],
       };
       return {
-        activeTabId: raw.tabId || 'NEON_BLACK',
+        activeTabId: raw.tabId || 'NEON_PROTEST',
         lang,
-        tabs: { NEON_BLACK: neonBlack, NEON: this.makeDefaultPerTab() },
+        tabs: { NEON_PROTEST: neonProtest, PRIDE_PROTEST: this.makeDefaultPerTab() },
       };
     }
 
@@ -120,11 +120,11 @@ export class SettingsService {
 
   private getDefaultState(): AppState {
     return {
-      activeTabId: 'NEON_BLACK',
+      activeTabId: 'NEON_PROTEST',
       lang: 'en',
       tabs: {
-        NEON_BLACK: this.makeDefaultPerTab(),
-        NEON: this.makeDefaultPerTab(),
+        NEON_PROTEST: this.makeDefaultPerTab(),
+        PRIDE_PROTEST: this.makeDefaultPerTab(),
       },
     };
   }

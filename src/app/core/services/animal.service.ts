@@ -3,11 +3,11 @@ import { Animal } from '../models/animal.model'
 import { TabId } from '../models/settings.model'
 
 const BASE_PATHS = {
-  neonBlack: 'assets/animals/neon_black',
-  neon: 'assets/animals/neon',
+  neonProtest: 'assets/animals/neon_protest',
+  prideProtest: 'assets/animals/pride_protest',
 } as const;
 
-const NEON_BLACK_NAMES = [
+const NEON_PROTEST_NAMES = [
   'BUDGIE',
   'BUMBLEBEE',
   'CHIMPANZEE',
@@ -15,9 +15,11 @@ const NEON_BLACK_NAMES = [
   'COW_POLLED',
   'DOG_BEAGLE',
   'DOG_BOSTON_TERRIER',
+  'DOVE',
   'DUCK',
   'FERRET',
   'FISH',
+  'GOOSE',
   'GUINEA_PIG',
   'HORSE',
   'LAMB',
@@ -35,9 +37,9 @@ const NEON_BLACK_NAMES = [
   'WILD_BOAR',
 ] as const;
 
-export type NeonBlackName = (typeof NEON_BLACK_NAMES)[number];
+export type NeonProtestName = (typeof NEON_PROTEST_NAMES)[number];
 
-const NEON_NAMES = [
+const PRIDE_PROTEST_NAMES = [
   'BIRD',
   'COW_AND_CALF',
   'DOG',
@@ -51,24 +53,30 @@ const NEON_NAMES = [
   'SHEEP',
 ] as const;
 
-export type NeonName = (typeof NEON_NAMES)[number];
+export type PrideProtestName = (typeof PRIDE_PROTEST_NAMES)[number];
 
 @Injectable({ providedIn: 'root' })
 export class AnimalService {
-  private readonly neonBlackAnimals: ReadonlyArray<Animal>;
-  private readonly neonAnimals: ReadonlyArray<Animal>;
+  private readonly neonProtestAnimals: ReadonlyArray<Animal>;
+  private readonly prideProtestAnimals: ReadonlyArray<Animal>;
 
   constructor() {
-    this.neonBlackAnimals = this.buildAnimals(
-      NEON_BLACK_NAMES,
-      BASE_PATHS.neonBlack,
+    this.neonProtestAnimals = this.buildAnimals(
+      NEON_PROTEST_NAMES,
+      BASE_PATHS.neonProtest,
       'jpg'
     );
-    this.neonAnimals = this.buildAnimals(NEON_NAMES, BASE_PATHS.neon, 'png');
+    this.prideProtestAnimals = this.buildAnimals(
+      PRIDE_PROTEST_NAMES,
+      BASE_PATHS.prideProtest,
+      'png'
+    );
   }
 
   public getAll(tabId: TabId): ReadonlyArray<Animal> {
-    return tabId === 'NEON_BLACK' ? this.neonBlackAnimals : this.neonAnimals;
+    return tabId === 'NEON_PROTEST'
+      ? this.neonProtestAnimals
+      : this.prideProtestAnimals;
   }
 
   public getByName(tabId: TabId, name: string): Animal | undefined {

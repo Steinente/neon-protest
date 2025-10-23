@@ -35,7 +35,7 @@ export class EditorComponent {
   public downloadOption: DownloadOption = 'ALL';
   public selectedTabIndex: number = 0;
 
-  private readonly tabs: Array<TabId> = ['NEON_BLACK', 'NEON'];
+  private readonly tabs: Array<TabId> = ['NEON_PROTEST', 'PRIDE_PROTEST'];
 
   constructor(
     public settings: SettingsService,
@@ -93,7 +93,7 @@ export class EditorComponent {
     if (!files.length) return;
 
     try {
-      const title = await firstValueFrom(this.translate.get('TITLE.' + tabId));
+      const title = await firstValueFrom(this.translate.get(`TITLE.${tabId}`));
 
       if (navigator.canShare({ files })) {
         await navigator.share({ files, title });
@@ -144,7 +144,7 @@ export class EditorComponent {
     index: number
   ): string {
     const tabId = this.settings.activeTabId;
-    const prefix = tabId === 'NEON' ? 'neon' : 'neon_black';
+    const prefix = tabId === 'PRIDE_PROTEST' ? 'pride_protest' : 'neon_protest';
     return `${prefix}_${s.date}_${s.format}_image${index + 1}.png`;
   }
 

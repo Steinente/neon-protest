@@ -1,5 +1,5 @@
 export type FormatId = 'PROFILE' | 'STORY';
-export type TabId = 'NEON_BLACK' | 'NEON';
+export type TabId = 'NEON_PROTEST' | 'PRIDE_PROTEST';
 export type ElementType = 'TITLE' | 'SUBTITLE' | 'TEXT' | 'DATE' | 'PLACE' | 'ANIMAL';
 
 export interface AppSettingsPerTab {

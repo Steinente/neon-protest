@@ -21,7 +21,7 @@ export class TitleSyncService {
 
   private async update(): Promise<void> {
     const tabId = this.settings.activeTabId;
-    const base = await firstValueFrom(this.translate.get('TITLE.' + tabId));
+    const base = await firstValueFrom(this.translate.get(`TITLE.${tabId}`));
     this.title.setTitle(base);
   }
 }

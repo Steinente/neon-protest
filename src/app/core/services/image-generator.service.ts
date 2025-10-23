@@ -25,14 +25,14 @@ type Theme = {
 };
 
 const THEMES: Record<TabId, Theme> = {
-  NEON: {
+  PRIDE_PROTEST: {
     title: { font: 'FeelGood', color: '#e00985', weight: 'normal' },
     subtitle: { font: 'FeelGood', color: '#131413', weight: 'normal' },
     text: { font: 'FeelGood', color: '#131413', weight: 'normal' },
     date: { font: 'FeelGood', color: '#131413', weight: 'normal' },
     place: { font: 'FeelGood', color: '#131413', weight: 'normal' },
   },
-  NEON_BLACK: {
+  NEON_PROTEST: {
     title: { font: 'Punk', color: '#fff', weight: 'normal' },
     subtitle: { font: 'Chainprinter', color: '#fff', weight: 'bold' },
     text: { font: 'Chainprinter', color: '#fff', weight: 'normal' },
@@ -78,7 +78,7 @@ export class ImageGeneratorService {
       imageIndex
     );
 
-    if (tabId === 'NEON') {
+    if (tabId === 'PRIDE_PROTEST') {
       elements = elements.map((el) =>
         el.value
           ? {
@@ -101,7 +101,7 @@ export class ImageGeneratorService {
         case 'SUBTITLE':
           if (!el.value || !el.fontSize) break;
           this.applyTextStyle(ctx, theme.subtitle, el.fontSize, h);
-          if (tabId === 'NEON') {
+          if (tabId === 'NEON_PROTEST') {
             this.drawJustifiedUnderlinedTextBetween(
               ctx,
               el.value,
@@ -127,7 +127,7 @@ export class ImageGeneratorService {
         case 'TEXT':
           if (!el.value || !el.fontSize) break;
           this.applyTextStyle(ctx, theme.text, el.fontSize, h);
-          if (tabId === 'NEON') {
+          if (tabId === 'NEON_PROTEST') {
             this.drawJustifiedMultilineTextBetween(
               ctx,
               el.value,
@@ -192,12 +192,14 @@ export class ImageGeneratorService {
 
   private getBackgroundPath(tabId: TabId, format: FormatId): string {
     const isProfile = format === 'PROFILE';
-    if (tabId === 'NEON') {
-      return isProfile ? 'assets/profile_neon.jpg' : 'assets/story_neon.jpg';
+    if (tabId === 'NEON_PROTEST') {
+      return isProfile
+        ? 'assets/profile_neon_protest.jpg'
+        : 'assets/story_neon_protest.jpg';
     }
     return isProfile
-      ? 'assets/profile_neon_black.jpg'
-      : 'assets/story_neon_black.jpg';
+      ? 'assets/profile_pride_protest.jpg'
+      : 'assets/story_pride_protest.jpg';
   }
 
   private applyTextStyle(
@@ -438,11 +440,11 @@ export class ImageGeneratorService {
       this.translate.get(`SOON_PROTEST.${tabId}`)
     );
 
-    if (tabId === 'NEON') {
+    if (tabId === 'NEON_PROTEST') {
       if (settingsPerTab.format === 'PROFILE') {
         if (imageIndex === 0) {
           elements.push(
-            this.createTitleElement(title, 0.5, 0.29, 1, 0.29),
+            this.createTitleElement(title, 0.5, 0.25, 1, 0.15),
             this.createSubtitleElement(subtitle, 0.5, 0.35, 1, 0.044),
             this.createAnimalElement(0.5, 0.7, 0.4),
             this.createDateElement(0.5, 0.42, 1, 0.033, settingsPerTab),
@@ -450,7 +452,7 @@ export class ImageGeneratorService {
           );
         } else {
           elements.push(
-            this.createTitleElement(title, 0.5, 0.29, 1, 0.29),
+            this.createTitleElement(title, 0.5, 0.25, 1, 0.15),
             this.createSubtitleElement(subtitle, 0.5, 0.35, 1, 0.044),
             this.createAnimalElement(0.5, 0.81, 0.3),
             this.createTextElement(soonCity, 0.5, 0.41, 1, 0.033)
@@ -459,7 +461,7 @@ export class ImageGeneratorService {
       } else {
         if (imageIndex === 0) {
           elements.push(
-            this.createTitleElement(title, 0.5, 0.23, 1, 0.2),
+            this.createTitleElement(title, 0.5, 0.21, 1, 0.105),
             this.createSubtitleElement(subtitle, 0.5, 0.28, 1, 0.03),
             this.createAnimalElement(0.5, 0.72, 0.44),
             this.createTextElement(soonProtest, 0.5, 0.34, 1, 0.025),
@@ -468,7 +470,7 @@ export class ImageGeneratorService {
           );
         } else {
           elements.push(
-            this.createTitleElement(title, 0.5, 0.23, 1, 0.2),
+            this.createTitleElement(title, 0.5, 0.21, 1, 0.105),
             this.createSubtitleElement(subtitle, 0.5, 0.28, 1, 0.03),
             this.createAnimalElement(0.5, 0.75, 0.38),
             this.createTextElement(soonCity, 0.5, 0.34, 1, 0.025)
@@ -479,16 +481,16 @@ export class ImageGeneratorService {
       if (settingsPerTab.format === 'PROFILE') {
         if (imageIndex === 0) {
           elements.push(
-            this.createTitleElement(title, 0.5, 0.24, 1, 0.18),
-            this.createSubtitleElement(subtitle, 0.5, 0.33, 1, 0.035),
+            this.createTitleElement(title, 0.5, 0.24, 1, 0.096),
+            this.createSubtitleElement(subtitle, 0.5, 0.30, 1, 0.035),
             this.createAnimalElement(0.5, 0.7, 0.48),
             this.createDateElement(0.5, 0.4, 1, 0.03, settingsPerTab),
             this.createPlaceElement(0.5, 0.43, 1, 0.028, settingsPerTab)
           );
         } else {
           elements.push(
-            this.createTitleElement(title, 0.5, 0.24, 1, 0.18),
-            this.createSubtitleElement(subtitle, 0.5, 0.31, 1, 0.03),
+            this.createTitleElement(title, 0.5, 0.24, 1, 0.096),
+            this.createSubtitleElement(subtitle, 0.5, 0.30, 1, 0.035),
             this.createAnimalElement(0.5, 0.81, 0.3),
             this.createTextElement(soonCity, 0.5, 0.365, 1, 0.028)
           );
@@ -496,8 +498,8 @@ export class ImageGeneratorService {
       } else {
         if (imageIndex === 0) {
           elements.push(
-            this.createTitleElement(title, 0.5, 0.21, 1, 0.13),
-            this.createSubtitleElement(subtitle, 0.5, 0.28, 1, 0.025),
+            this.createTitleElement(title, 0.5, 0.2, 1, 0.068),
+            this.createSubtitleElement(subtitle, 0.5, 0.25, 1, 0.025),
             this.createAnimalElement(0.5, 0.73, 0.4),
             this.createTextElement(soonProtest, 0.5, 0.34, 1, 0.023),
             this.createDateElement(0.5, 0.47, 1, 0.021, settingsPerTab),
@@ -505,10 +507,10 @@ export class ImageGeneratorService {
           );
         } else {
           elements.push(
-            this.createTitleElement(title, 0.5, 0.21, 1, 0.13),
-            this.createSubtitleElement(subtitle, 0.5, 0.28, 1, 0.025),
-            this.createAnimalElement(0.5, 0.78, 0.35),
-            this.createTextElement(soonCity, 0.5, 0.34, 1, 0.021)
+            this.createTitleElement(title, 0.5, 0.2, 1, 0.068),
+            this.createSubtitleElement(subtitle, 0.5, 0.25, 1, 0.025),
+            this.createAnimalElement(0.5, 0.76, 0.35),
+            this.createTextElement(soonCity, 0.5, 0.33, 1, 0.021)
           );
         }
       }
