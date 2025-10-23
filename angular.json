@@ -3,7 +3,7 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-    "neon-black": {
+    "neon-protest": {
       "projectType": "application",
       "schematics": {
         "@schematics/angular:component": {
@@ -60,10 +60,10 @@
           "builder": "@angular/build:dev-server",
           "configurations": {
             "production": {
-              "buildTarget": "neon-black:build:production"
+              "buildTarget": "neon-protest:build:production"
             },
             "development": {
-              "buildTarget": "neon-black:build:development"
+              "buildTarget": "neon-protest:build:development"
             }
           },
           "defaultConfiguration": "development"
