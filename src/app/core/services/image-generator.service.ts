@@ -454,8 +454,7 @@ export class ImageGeneratorService {
           elements.push(
             this.createTitleElement(title, 0.5, 0.25, 1, 0.15),
             this.createSubtitleElement(subtitle, 0.5, 0.35, 1, 0.038),
-            this.createAnimalElement(0.5, 0.81, 0.3),
-            this.createTextElement(soonCity, 0.5, 0.41, 1, 0.033)
+            this.createTextElement(soonCity, 0.5, 0.42, 1, 0.027)
           );
         }
       } else {
@@ -472,8 +471,8 @@ export class ImageGeneratorService {
           elements.push(
             this.createTitleElement(title, 0.5, 0.21, 1, 0.105),
             this.createSubtitleElement(subtitle, 0.5, 0.28, 1, 0.03),
-            this.createAnimalElement(0.5, 0.75, 0.38),
-            this.createTextElement(soonCity, 0.5, 0.34, 1, 0.025)
+            this.createAnimalElement(0.5, 0.77, 0.36),
+            this.createTextElement(soonCity, 0.5, 0.34, 1, 0.018)
           );
         }
       }
