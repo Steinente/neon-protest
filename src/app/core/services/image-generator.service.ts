@@ -445,7 +445,7 @@ export class ImageGeneratorService {
         if (imageIndex === 0) {
           elements.push(
             this.createTitleElement(title, 0.5, 0.25, 1, 0.15),
-            this.createSubtitleElement(subtitle, 0.5, 0.35, 1, 0.044),
+            this.createSubtitleElement(subtitle, 0.5, 0.35, 1, 0.038),
             this.createAnimalElement(0.5, 0.7, 0.4),
             this.createDateElement(0.5, 0.42, 1, 0.033, settingsPerTab),
             this.createPlaceElement(0.5, 0.455, 1, 0.033, settingsPerTab)
@@ -453,7 +453,7 @@ export class ImageGeneratorService {
         } else {
           elements.push(
             this.createTitleElement(title, 0.5, 0.25, 1, 0.15),
-            this.createSubtitleElement(subtitle, 0.5, 0.35, 1, 0.044),
+            this.createSubtitleElement(subtitle, 0.5, 0.35, 1, 0.038),
             this.createAnimalElement(0.5, 0.81, 0.3),
             this.createTextElement(soonCity, 0.5, 0.41, 1, 0.033)
           );
@@ -462,7 +462,7 @@ export class ImageGeneratorService {
         if (imageIndex === 0) {
           elements.push(
             this.createTitleElement(title, 0.5, 0.21, 1, 0.105),
-            this.createSubtitleElement(subtitle, 0.5, 0.28, 1, 0.03),
+            this.createSubtitleElement(subtitle, 0.5, 0.28, 1, 0.028),
             this.createAnimalElement(0.5, 0.72, 0.44),
             this.createTextElement(soonProtest, 0.5, 0.34, 1, 0.025),
             this.createDateElement(0.5, 0.42, 1, 0.025, settingsPerTab),
